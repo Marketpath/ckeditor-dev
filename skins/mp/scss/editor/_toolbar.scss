@@ -1,0 +1,167 @@
+/// <reference path="editor.scss" />
+
+/*
++-- .cke_toolbox ----------------------------------------------------------+
+| +-- .cke_toolbar --+ +-- .cke_toolbar --+ ... +-- .cke_toolbar_break --+ |
+| |                  | |                  |     |                        | |
+| +------------------+ +------------------+     +------------------------+ |
+| +-- .cke_toolbar --+ +-- .cke_toolbar --+ ...                            |
+| |                  | |                  |                                |
+| +------------------+ +------------------+                                |
++--------------------------------------------------------------------------+
+
++-- .cke_toolbar ----------------------------------------------------------------+
+| +-- .cke_toolbar_start --+ +-- .cke_toolgroup (*) --+ +-- .cke_toolbar_end --+ |
+| |                        | |                        | |                      | |
+| +------------------------+ +------------------------+ +----------------------+ |
++--------------------------------------------------------------------------------+
+
+(*) .cke_toolgroup is available only when the toolbar items can be grouped
+    (buttons). If the items can't be group (combos), this box is not available
+	and the items are rendered straight in that place.
+
++-- .cke_button -------------------------------------+
+| +-- .cke_button_icon --+ +-- .cke_button_label --+ |
+| |                      | |                       | |
+| +----------------------+ +-----------------------+ |
++----------------------------------------------------+
+*/
+
+.cke_toolbox {
+	display: block;
+	padding-right: 10px;
+	white-space: normal;
+}
+
+.cke_toolbox_main {
+	white-space: normal;
+}
+
+.cke_toolbar {
+	display: inline-block;
+	white-space: nowrap;
+	margin: 5px;
+	vertical-align: middle;
+}
+
+.cke_toolbar_separator {
+	display: inline-block;
+	height: 16px;
+	width: 2px;
+	margin: 2px;
+	background: $dialog-bordercolor;
+}
+
+
+.cke_toolbar_break {
+	&:after {
+		content: "\A";
+		white-space: pre;
+	}
+}
+
+a.cke_button {
+	display: inline-block;
+	border: 1px solid $input-bordercolor;
+	color: $dialog-link-color;
+	background: $input-bg;
+	margin-left: 5px;
+	padding: 3px; // 5px;
+	cursor: pointer;
+
+	* {
+		cursor: pointer;
+	}
+
+	&_on,
+	&_off {
+		&:hover,
+		&:focus,
+		&:active {
+			background: $input-inner-highlight-bg;
+		}
+	}
+
+	&_on {
+		background: $gray-90;
+	}
+
+	&_off {
+	}
+
+	&_disabled {
+		opacity: 0.3;
+		border-color: transparent;
+		background-color: transparent;
+		cursor: default;
+
+		* {
+			cursor: default;
+		}
+	}
+}
+
+.cke_button_icon {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+}
+
+.cke_button_label {
+	display: none;
+	margin-left: 3px;
+	line-height: 16px;
+	vertical-align: middle;
+	color: $dialog-link-color;
+}
+
+.cke_button_arrow {
+	display: inline-block;
+	margin: 7px 0 0 3px;
+	width: 0;
+	height: 0;
+	cursor: default;
+	vertical-align: top;
+	border-left: 3px solid transparent;
+	border-right: 3px solid transparent;
+	border-top: 3px solid $input-bordercolor;
+}
+
+
+
+
+a.cke_toolbox_collapser {
+	width: 12px;
+	height: 11px;
+	float: right;
+	margin: 11px 0 0;
+	font-size: 0;
+	cursor: pointer;
+	text-align: center;
+	border: 1px solid $input-bordercolor;
+
+	&.cke_toolbox_collapser_min {
+		margin: 0 2px 4px;
+
+		.cke_arrow {
+			margin-top: 4px;
+			border-bottom-color: transparent;
+			border-top-color: $input-bordercolor;
+		}
+	}
+
+	&:hover {
+		background: $gray-90;
+	}
+
+	.cke_arrow {
+		cursor: pointer;
+		display: inline-block;
+		height: 0;
+		width: 0;
+		font-size: 0;
+		margin-top: 1px;
+		border: 3px solid transparent;
+		border-bottom-color: $input-bordercolor;
+	}
+}

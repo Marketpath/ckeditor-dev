@@ -1,0 +1,85 @@
+/// <reference path="editor.scss" />
+
+/*
++-- .cke_combo----------------------------------------------------------------------+
+| +-- .cke_combo_label --+ +-- .cke_combo_button ---------------------------------+ |
+| |                      | | +-- .cke_combo_text --+ +-- .cke_combo_open -------+ | |
+| |                      | | |                     | | +-- .cke_combo_arrow --+ | | |
+| |                      | | |                     | | |                      | | | |
+| |                      | | |                     | | +----------------------+ | | |
+| |                      | | +---------------------+ +--------------------------+ | |
+| +----------------------+ +------------------------------------------------------+ |
++-----------------------------------------------------------------------------------+
+*/
+
+.cke_combo {
+	color: $input-color;
+	margin-left: 5px;
+
+	&_disabled {
+		opacity: 0.3;
+	}
+}
+
+.cke_combo_label {
+	display: none;
+	line-height: 16px;
+	vertical-align: middle;
+	margin-right: 3px;
+}
+
+a.cke_combo_button {
+	display: inline-block;
+	border: 1px solid $input-bordercolor;
+	color: $dialog-link-color;
+	background: $input-bg;
+	padding: 0 5px;
+	cursor: pointer;
+
+	&:hover,
+	&:focus,
+	&:active {
+		background: $toolbar-hover-bg;
+	}
+
+	&:focus {
+		outline: none;
+	}
+}
+
+.cke_combo_text {
+	color: $dialog-link-color;
+	cursor: pointer;
+	display: inline-block;
+	line-height: 16px;
+	vertical-align: middle;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 60px;
+}
+
+.cke_combo_open {
+	cursor: pointer;
+	display: inline-block;
+	font-size: 0;
+	line-height: 16px;
+	vertical-align: middle;
+	margin-left: 5px;
+	padding: 3px 0 3px 3px;
+	border-left: 1px solid $dialog-bordercolor;
+}
+
+.cke_combo_arrow {
+	cursor: pointer;
+	font-size: 0;
+	border-left: 3px solid transparent;
+	border-right: 3px solid transparent;
+	border-top: 3px solid $dialog-bordercolor;
+}
+
+
+.cke_combo_on {
+	a.cke_combo_button {
+		background: $gray-90;
+	}
+}

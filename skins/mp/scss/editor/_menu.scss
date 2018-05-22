@@ -1,0 +1,127 @@
+/// <reference path="editor.scss" />
+
+/*
++-- .cke_menu -----------------+
+| +-- .cke_menuitem  --------+ |
+| | +-- .cke_menubutton ---+ | |
+| | |                      | | |
+| | +----------------------+ | |
+| +--------------------------+ |
+| +-- .cke_menuseparator ----+ |
+| ...                          |
++------------------------------+
+
++-- .cke_menubutton -------------------------------------------------------------------------+
+| +-- .cke_menubutton_inner ---------------------------------------------------------------+ |
+| | +-- .cke_menubutton_icon ---+ +-- .cke_menubutton_label --+ +-- .cke_cke_menuarrow --+ | |
+| | | +-- .cke_button_icon ---+ | |                           | |                        | | |
+| | | |                       | | |                           | |                        | | |
+| | | +-----------------------+ | |                           | |                        | | |
+| | +---------------------------+ +---------------------------+ +------------------------+ | |
+| +----------------------------------------------------------------------------------------+ |
++--------------------------------------------------------------------------------------------+
+*/
+
+.cke_menubutton {
+	display: block;
+	color: $dialog-link-color;
+	cursor: pointer;
+
+	* {
+		cursor: pointer;
+	}
+
+	&_on {
+		background: $gray-95;
+		border: 1px solid $dialog-inner-light-bordercolor;
+
+		.cke_menubutton_icon {
+			background-color: $gray-90;
+		}
+	}
+
+	&_disabled {
+		opacity: 0.3;
+		cursor: default;
+
+		* {
+			cursor: default;
+		}
+
+		&:hover,
+		&:focus,
+		&:active {
+			background: none;
+			color: $dialog-link-color;
+
+			.cke_menubutton_icon {
+				background-color: $gray-95;
+			}
+		}
+	}
+
+	&:hover,
+	&:focus,
+	&:active {
+		background: $toolbar-hover-bg;
+		color: $orange;
+		outline: none;
+
+		.cke_menubutton_icon {
+			background-color: $gray-90;
+		}
+	}
+}
+
+.cke_menuseparator {
+	background-color: $input-bordercolor;
+	height: 1px;
+}
+
+.cke_menubutton_inner {
+	display: table-row;
+}
+
+.cke_menubutton_icon,
+.cke_menubutton_label,
+.cke_menuarrow {
+	display: table-cell;
+}
+
+.cke_menubutton_icon {
+	background-color: $gray-95;
+	padding: 6px 4px;
+}
+
+.cke_menubutton_label {
+	color: $dialog-link-color;
+	padding: 0 5px;
+	width: 100%;
+	vertical-align: middle;
+}
+
+.cke_menubutton_shortcut {
+	color: $gray-70;
+}
+
+.cke_menuarrow {
+	padding: 0 5px;
+
+	span {
+		display: inline-block;
+		height: 0;
+		width: 0;
+		overflow: hidden;
+		font-size: 0;
+		cursor: pointer;
+		vertical-align: middle;
+		border: 3px solid transparent;
+		border-left-color: $dialog-bordercolor;
+	}
+}
+
+.cke_panel_frame {
+	.cke_menubutton_label {
+		display: none;
+	}
+}

@@ -20,13 +20,17 @@ else {
 	CKEDITOR._autoLoad = 'ckeditor';
 
 	// Include the loader script.
-	if ( document.body && ( !document.readyState || document.readyState == 'complete' ) ) {
+	var loadScript = function() {
 		var script = document.createElement( 'script' );
 		script.type = 'text/javascript';
 		script.src = CKEDITOR.getUrl( 'core/loader.js' );
 		document.body.appendChild( script );
+	};
+	if ( document.body && ( !document.readyState || document.readyState == 'complete' ) ) {
+		loadScript();
 	} else {
-		document.write( '<script type="text/javascript" src="' + CKEDITOR.getUrl( 'core/loader.js' ) + '"></script>' );
+		jQuery(document).ready(loadScript);
+		//document.write( '<script type="text/javascript" src="' + CKEDITOR.getUrl( 'core/loader.js' ) + '"></script>' );
 	}
 
 }
@@ -45,4 +49,4 @@ else {
  * @cfg {String} [skinName='moono-lisa']
  * @member CKEDITOR
  */
-CKEDITOR.skinName = 'moono-lisa';
+CKEDITOR.skinName = 'mp';

@@ -1,0 +1,25 @@
+/// <reference path="editor.scss" />
+
+/*
++-- .cke_path ---------------------------------------------------------------+
+| +-- .cke_path_item ----+ +-- .cke_path_item ----+ +-- .cke_path_empty ---+ |
+| |                      | |                      | |                      | |
+| +----------------------+ +----------------------+ +----------------------+ |
++----------------------------------------------------------------------------+
+*/
+
+a.cke_path_item {
+	display: inline-block;
+	padding: 3px 7px;
+	margin-right: 2px;
+	cursor: pointer;
+	color: $dialog-inner-color;
+	font-size: 12px;
+
+	&:hover,
+	&:focus,
+	&:active {
+		background-color: $input-inner-highlight-bg;
+		color: $input-inner-highlight-color;
+	}
+}
