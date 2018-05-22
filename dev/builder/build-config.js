@@ -31,6 +31,7 @@ var CKBUILDER_CONFIG = {
 		'package.json',
 		'README.md',
 		'tests',
+		'build.sh',
 		''
 	],
 	plugins: {
