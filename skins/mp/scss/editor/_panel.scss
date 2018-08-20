@@ -1,0 +1,124 @@
+/// <reference path="editor.scss" />
+
+/*
++-- .cke_panel ------------------------+
+| +-- IFRAME.cke_panel_frame --------+ |
+| | +-- HTML.cke_panel_container --+ | |
+| | | +-- .cke_panel_block ------+ | | |
+| | | |                          | | | |
+| | | |     (contents here)      | | | |
+| | | |                          | | | |
+| | | +--------------------------+ | | |
+| | +------------------------------+ | |
+| +----------------------------------+ |
++--------------------------------------+
+*/
+
+.cke_panel {
+	visibility: visible;
+	width: 120px;
+	height: 100px;
+	overflow: hidden;
+	background-color: #FFF;
+	border: 1px solid $editor-bordercolor;
+}
+
+.cke_menu_panel {
+	padding: 0;
+	margin: 0;
+}
+
+.cke_combopanel {
+	width: 150px;
+	height: 170px;
+}
+
+.cke_panel_frame {
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	overflow-x: hidden;
+}
+
+.cke_panel_container {
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.cke_panel_block {
+	&:focus {
+		outline: none;
+	}
+}
+
+/*
++-- .cke_panel_block -----------------+
+| +-- .cke_panel_grouptitle --------+ |
+| |                                 | |
+| +---------------------------------+ |
+| +-- .cke_panel_list --------------+ |
+| | +-- .cke_panel_listItem ------+ | |
+| | | +-- a --------------------+ | | |
+| | | | +-- span -------------+ | | | |
+| | | | |                     | | | | |
+| | | | +---------------------+ | | | |
+| | | +-------------------------+ | | |
+| | +-----------------------------+ | |
+| | ...                             | |
+| +---------------------------------+ |
++-------------------------------------+
+*/
+
+.cke_panel_grouptitle {
+	cursor: default;
+	font-size: $small-size;
+	color: $plain-color;
+	font-weight: bold;
+	white-space: nowrap;
+	margin: 0;
+	padding: 6px 6px 7px 6px;
+	border-bottom: 1px solid $editor-bordercolor;
+	background: $editor-bg;
+}
+
+.cke_panel_list {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	white-space: nowrap;
+}
+
+.cke_panel_listItem {
+	margin: 0;
+	padding: 0;
+
+	a {
+		padding: 3px 7px;
+		display: block;
+		color: $main-color;
+		text-decoration: none;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	&.cke_selected a,
+	a:hover,
+	a:focus,
+	a:active {
+		color: $link-color;
+		background-color: $hover-bg;
+		outline: none;
+	}
+
+	p,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	pre {
+		margin: 0;
+		padding: 0
+	}
+}

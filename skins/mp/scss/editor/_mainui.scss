@@ -1,0 +1,81 @@
+/// <reference path="editor.scss" />
+
+/*
+	+-- .cke_chrome ----------------------+
+	|+-- .cke_inner ---------------------+|
+	|| +-- .cke_top -------------------+ ||
+	|| |                               | ||
+	|| +-------------------------------+ ||
+	|| +-- .cke_contents --------------+ ||
+	|| |                               | ||
+	|| +-------------------------------+ ||
+	|| +-- .cke_bottom ----------------+ ||
+	|| |                  .cke_resizer | ||
+	|| +-------------------------------+ ||
+	|+-----------------------------------+|
+	+-------------------------------------+
+*/
+
+
+.cke_chrome {
+	display: block;
+	border: 1px solid $editor-bordercolor;
+	padding: 0;
+	visibility: inherit;
+}
+
+.cke_inner {
+	display: block;
+	background: #FFF;
+	padding: 0;
+	-webkit-touch-callout: none;
+}
+
+.cke_top,
+.cke_contents,
+.cke_bottom {
+	display: block;
+}
+
+.cke_top {
+	border-bottom: 1px solid $editor-bordercolor;
+	background: $editor-bg;
+	position: relative;
+}
+
+.cke_bottom {
+	padding: 3px 10px;
+	position: relative;
+	border-top: 1px solid $editor-bordercolor;
+	background: $editor-bg;
+
+	&:after {
+		display: block;
+		content: "";
+		clear: both;
+	}
+}
+
+/* On iOS we need to manually enable scrolling in the contents block. (#9945) */
+.cke_browser_ios .cke_contents {
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.cke_resizer {
+	width: 0;
+	height: 0;
+	overflow: hidden;
+	border-width: 10px 10px 0 0;
+	border-color: transparent $editor-bordercolor transparent transparent;
+	border-style: dashed solid dashed dashed;
+	font-size: 0;
+	vertical-align: bottom;
+	margin: 6px -4px 2px 0;
+	cursor: se-resize;
+	float: right;
+
+	&:hover {
+		border-right-color: $link-color;
+	}
+}

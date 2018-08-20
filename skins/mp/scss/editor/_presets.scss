@@ -1,0 +1,16 @@
+/// <reference path="editor.scss" />
+
+/* "Ace" button label */
+.cke_button__ace_label {
+	display: inline;
+}
+
+/* "Font Size" panel size */
+.cke_combopanel__fontsize
+{
+	width: 135px;
+}
+
+.cke_combo__fontsize .cke_combo_text {
+	width: 50px;
+}
