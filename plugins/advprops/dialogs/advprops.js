@@ -11,6 +11,12 @@ CKEDITOR.dialog.add('advprops', function (editor) {
 		'class': 'Classes',
 		'style': 'Inline Styles'
 	};
+	var attrIsAllowed = function (attr) {
+		return attr.substr(0, 9) != 'data-cke-' && ['data-ref', 'data-preset', 'data-widget'].indexOf(attr) == -1;
+	};
+	var attrIsValid = function (attr) {
+		return /^[:_a-z][-:_.a-z0-9]*$/i.test(attr);
+	};
 	var lastId = 0;
 
 	var buildFullContentDefinition = function () {
@@ -27,6 +33,13 @@ CKEDITOR.dialog.add('advprops', function (editor) {
 
 				var name = addName.getValue();
 				if (!name) {
+					return false;
+				}
+				if (!attrIsValid(name)) {
+					alert('The attribute "' + name + '" contains one or more characters that are not supported by this dialog. Please try a different name.');
+					return false;
+				} else if (!attrIsAllowed(name)) {
+					alert('The attribute "' + name + '" may not be added or edited by this dialog.');
 					return false;
 				}
 				var value = addValue.getValue() || 'true';
@@ -150,9 +163,7 @@ CKEDITOR.dialog.add('advprops', function (editor) {
 			var path = document.createElement('p');
 			for (var i = 0; i < dialog.mpElements.length; i++) {
 				if (i > 0) {
-					var sep = document.createElement('span');
-					sep.innerText = ' -> ';
-					sep.className = 'separator';
+					var sep = document.createTextNode(' \u203A ');
 					path.appendChild(sep);
 				}
 
@@ -164,6 +175,7 @@ CKEDITOR.dialog.add('advprops', function (editor) {
 				} else {
 					newItem = document.createElement('a');
 					newItem.href = 'javascript:void(0)';
+					newItem.className = 'link';
 					newItem.dataset.idx = i;
 					newItem.onclick = function () {
 						var idx = this.dataset.idx;
@@ -176,21 +188,21 @@ CKEDITOR.dialog.add('advprops', function (editor) {
 						return false;
 					}
 					newItem.style.fontWeight = 'bold';
-					newItem.style.color = 'blue';
-					newItem.style.textDecoration = 'underline';
-					newItem.style.cursor = 'pointer';
+					//newItem.style.color = 'blue';
+					//newItem.style.textDecoration = 'underline';
+					//newItem.style.cursor = 'pointer';
 				}
 				newItem.innerText = element.getName();
 				path.appendChild(newItem);
 			}
-			path.style.marginBottom = '10px';
+			//path.style.marginBottom = '10px';
 			container.appendChild(path);
 		}
 
 		var curName = document.createElement('h3');
 		curName.innerText = selected ? getElementLabelText(selected, dialog.updateElements[dialog.mpIndex]) : 'invalid selection';
-		curName.style.fontSize = '2em';
-		curName.style.margin = '0.5em 0';
+		//curName.style.fontSize = '2em';
+		//curName.style.margin = '0.5em 0';
 		container.appendChild(curName);
 
 		var curElement = tabElement.getElement().$;
@@ -570,14 +582,8 @@ CKEDITOR.dialog.add('advprops', function (editor) {
 						var attrs = Object.keys(attributes).concat(Object.keys(updateMap));
 						attrs.sort();
 						matching = attrs.filter(function (attr, idx, arr) {
-							return (idx == 0 || attr != arr[idx - 1]) && attr.substr(0, nameLen) == name;
+							return (idx == 0 || attr != arr[idx - 1]) && attr.substr(0, nameLen) == name && attrIsAllowed(name);
 						});
-						if (name == 'data-') {
-							//special case to remove ckeditor attributes
-							matching = matching.filter(function (attr) {
-								return attr.substr(0, 9) != 'data-cke-' && ['data-ref', 'data-preset', 'data-widget'].indexOf(attr) == -1;
-							});
-						}
 						break;
 					case '*':
 						//special case
@@ -616,7 +622,7 @@ CKEDITOR.dialog.add('advprops', function (editor) {
 									return false;
 								}
 							}
-							return true;
+							return attrIsAllowed(attr);
 						});
 						break;
 					default:

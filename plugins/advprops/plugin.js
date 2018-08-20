@@ -1,6 +1,5 @@
 (function () {
     CKEDITOR.plugins.add('advprops', {
-        //requires: 'liquid-markup',
         icons: 'advprops',
 		init: function (editor) {
 			editor.config

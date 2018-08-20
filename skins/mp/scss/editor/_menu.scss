@@ -22,21 +22,28 @@
 +--------------------------------------------------------------------------------------------+
 */
 
-.cke_menubutton {
+a.cke_menubutton {
 	display: block;
-	color: $dialog-link-color;
+	//color: $dialog-link-color;
 	cursor: pointer;
 
 	* {
-		cursor: pointer;
+		cursor: inherit;
 	}
 
 	&_on {
-		background: $gray-95;
-		border: 1px solid $dialog-inner-light-bordercolor;
+		background: $button-on-bg;
+	}
+
+	&:hover,
+	&:focus,
+	&:active {
+		background: $hover-bg;
+		color: $link-color;
+		outline: none;
 
 		.cke_menubutton_icon {
-			background-color: $gray-90;
+			background-color: $menu-button-hover-bg;
 		}
 	}
 
@@ -44,37 +51,21 @@
 		opacity: 0.3;
 		cursor: default;
 
-		* {
-			cursor: default;
-		}
-
 		&:hover,
 		&:focus,
 		&:active {
 			background: none;
-			color: $dialog-link-color;
+			color: inherit;
 
 			.cke_menubutton_icon {
-				background-color: $gray-95;
+				background-color: $menu-button-bg;
 			}
-		}
-	}
-
-	&:hover,
-	&:focus,
-	&:active {
-		background: $toolbar-hover-bg;
-		color: $orange;
-		outline: none;
-
-		.cke_menubutton_icon {
-			background-color: $gray-90;
 		}
 	}
 }
 
 .cke_menuseparator {
-	background-color: $input-bordercolor;
+	background-color: $editor-bordercolor;
 	height: 1px;
 }
 
@@ -89,34 +80,29 @@
 }
 
 .cke_menubutton_icon {
-	background-color: $gray-95;
+	background-color: $menu-button-bg;
 	padding: 6px 4px;
 }
 
 .cke_menubutton_label {
-	color: $dialog-link-color;
 	padding: 0 5px;
 	width: 100%;
 	vertical-align: middle;
 }
 
 .cke_menubutton_shortcut {
-	color: $gray-70;
+	color: $menu-button-shortcut-color;
 }
 
 .cke_menuarrow {
 	padding: 0 5px;
 
 	span {
-		display: inline-block;
-		height: 0;
-		width: 0;
-		overflow: hidden;
+		//overflow: hidden;
 		font-size: 0;
 		cursor: pointer;
 		vertical-align: middle;
-		border: 3px solid transparent;
-		border-left-color: $dialog-bordercolor;
+		@include arrow(3px, right);
 	}
 }
 

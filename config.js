@@ -150,6 +150,7 @@ CKEDITOR.editorConfig = function (config) {
 		'aligngroup,' +
 		'strikegroup,' +
 		'pastegroup,' +
+		'mpdialog,' +
 		'liquidmarkup,' +
 		'mpimage,' +
 		'mplink,' +

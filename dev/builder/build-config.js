@@ -18,6 +18,7 @@ var CKBUILDER_CONFIG = {
 		'docs',
 		'.DS_Store',
 		'.editorconfig',
+		'.github',
 		'.gitignore',
 		'.gitattributes',
 		'gruntfile.js',
@@ -32,7 +33,7 @@ var CKBUILDER_CONFIG = {
 		'README.md',
 		'tests',
 		'build.sh',
-		''
+		'samples'
 	],
 	plugins: {
 		//****** original plugins
@@ -157,6 +158,7 @@ var CKBUILDER_CONFIG = {
 		aligngroup: 1,
 		strikegroup: 1,
 		pastegroup: 1,
+		mpdialog: 1,
 		liquidmarkup: 1,
 		mpimage: 1,
 		mplink: 1,

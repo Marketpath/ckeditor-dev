@@ -82,8 +82,7 @@
 				
 
 				function doEdit() {
-					var isFinished = false,
-						dialogArgs = {},
+					var dialogArgs = {},
 						widget = editor.widgets.focused,
 						img = widget && widget.parts.image,
 						plugin = CKEDITOR.plugins.image2;
@@ -157,17 +156,8 @@
 						}
 					}
 
-					var finishDialogNav = function () {
-						if (isFinished) {
-							return;
-						}
-						isFinished = true;
-						editor.config.Dialog.off('imgSaved').off('onCancel');
-						editor.config.Dialog.closeSub();
-						editor.focusManager.unlock();
-					};
-
-					editor.config.Dialog.off('imgSaved').on('imgSaved', function (info) {
+					var Dialog = editor.config.Dialog;
+					Dialog.off('imgSaved').on('imgSaved', function (info) {
 						var widgetData = {
 							src: info.url,
 							alt: info.alt || null,
@@ -179,12 +169,12 @@
 							hasCaption: !!info.captioned,
 							align: info.alignment || 'none'
 						},
-						imgAttributes = {
-							'data-ref': info.type == 'image' && info.guid ? 'image:' + info.guid : null,
-							'data-preset': info.type == 'image' && info.guid && Array.isArray(info.presets) && info.presets.map(function (preset) { return preset.Code; }).join('/') || null,
-							'title': info.title || null
-						},
-						imgStyles = {};
+							imgAttributes = {
+								'data-ref': info.type == 'image' && info.guid ? 'image:' + info.guid : null,
+								'data-preset': info.type == 'image' && info.guid && Array.isArray(info.presets) && info.presets.map(function (preset) { return preset.Code; }).join('/') || null,
+								'title': info.title || null
+							},
+							imgStyles = {};
 
 						var height = info.height,
 							heightIsPct = height && height[height.length - 1] == '%',
@@ -238,7 +228,7 @@
 							}
 							imgStyles['border'] = border;
 						}
-						
+
 
 						var setImgInfo = function (img) {
 							for (var prop in imgAttributes) {
@@ -296,17 +286,13 @@
 								caption.removeStyle('margin-left');
 							}
 						}
-						//widget = editor.widgets.initOn(img, 'image', widgetData);
-						//editor.widgets.finalizeCreation(widget.wrapper.getParent());
 					});
+					
+					var finish = function () {
+						Dialog.off('imgSaved');
+					};
 
-					editor.config.Dialog.off('onCancel').on('onCancel', finishDialogNav);
-					editor.once('selectionChange', finishDialogNav);
-					editor.once('mode', finishDialogNav);
-
-					editor.focusManager.lock();
-					editor.config.Dialog.openSub('img-editor', dialogArgs);
-					editor.config.$scope && editor.config.$scope.$apply();
+					CKEDITOR.plugins.mpdialog.openDialog(editor, 'img-editor', dialogArgs, finish);
 				}
 			});
 		}
