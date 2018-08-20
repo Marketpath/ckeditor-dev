@@ -49,9 +49,8 @@
 	height: 16px;
 	width: 2px;
 	margin: 2px;
-	background: $dialog-bordercolor;
+	background: $editor-bordercolor;
 }
-
 
 .cke_toolbar_break {
 	&:after {
@@ -62,15 +61,15 @@
 
 a.cke_button {
 	display: inline-block;
-	border: 1px solid $input-bordercolor;
-	color: $dialog-link-color;
-	background: $input-bg;
+	border: 1px solid $editor-bordercolor;
+	background: #FFF;
 	margin-left: 5px;
-	padding: 3px; // 5px;
+	padding: 3px;
 	cursor: pointer;
+	line-height: 1em;
 
 	* {
-		cursor: pointer;
+		cursor: inherit;
 	}
 
 	&_on,
@@ -78,15 +77,13 @@ a.cke_button {
 		&:hover,
 		&:focus,
 		&:active {
-			background: $input-inner-highlight-bg;
+			background: $hover-bg;
 		}
 	}
 
 	&_on {
-		background: $gray-90;
-	}
-
-	&_off {
+		background: $button-on-bg;
+		border-color: $button-on-bg;
 	}
 
 	&_disabled {
@@ -94,10 +91,6 @@ a.cke_button {
 		border-color: transparent;
 		background-color: transparent;
 		cursor: default;
-
-		* {
-			cursor: default;
-		}
 	}
 }
 
@@ -105,63 +98,60 @@ a.cke_button {
 	display: inline-block;
 	width: 16px;
 	height: 16px;
+
+	/*&.fa {
+		font: normal normal normal 14px/1 FontAwesome;
+	}*/
 }
 
 .cke_button_label {
 	display: none;
 	margin-left: 3px;
-	line-height: 16px;
-	vertical-align: middle;
-	color: $dialog-link-color;
 }
 
 .cke_button_arrow {
-	display: inline-block;
 	margin: 7px 0 0 3px;
-	width: 0;
-	height: 0;
 	cursor: default;
 	vertical-align: top;
-	border-left: 3px solid transparent;
-	border-right: 3px solid transparent;
-	border-top: 3px solid $input-bordercolor;
+	@include arrow(3px, down);
 }
-
-
-
 
 a.cke_toolbox_collapser {
 	width: 12px;
 	height: 11px;
 	float: right;
-	margin: 11px 0 0;
+	margin: 16px -5px 0 0;
 	font-size: 0;
 	cursor: pointer;
 	text-align: center;
-	border: 1px solid $input-bordercolor;
-
-	&.cke_toolbox_collapser_min {
-		margin: 0 2px 4px;
-
-		.cke_arrow {
-			margin-top: 4px;
-			border-bottom-color: transparent;
-			border-top-color: $input-bordercolor;
-		}
-	}
-
-	&:hover {
-		background: $gray-90;
-	}
+	border: 1px solid $collapsebutton-color;
 
 	.cke_arrow {
 		cursor: pointer;
-		display: inline-block;
-		height: 0;
-		width: 0;
 		font-size: 0;
-		margin-top: 1px;
-		border: 3px solid transparent;
-		border-bottom-color: $input-bordercolor;
+		margin-top: 2px;
+		@include arrow(3px, up, $collapsebutton-color);
+	}
+
+	&:hover {
+		background: $hover-bg;
+
+		.cke_arrow {
+			@include arrow-color(up, $link-color);
+		}
+	}
+
+	&.cke_toolbox_collapser_min {
+		margin-top: 0;
+
+		.cke_arrow {
+			@include arrow-color(down, $collapsebutton-color);
+		}
+
+		&:hover {
+			.cke_arrow {
+				@include arrow-color(down, $link-color);
+			}
+		}
 	}
 }

@@ -28,8 +28,8 @@
 	position: static;
 	transition: none;
 	border-collapse: collapse;
-	font: normal normal normal 12px $primary-font;
-	color: #000;
+	font: $editor-font;
+	color: $main-color; // #000;
 	text-align: left;
 	white-space: nowrap;
 	cursor: auto;

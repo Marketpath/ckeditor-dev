@@ -10,70 +10,33 @@
 					//adapted from CKEditor/source/plugins/link/dialogs/link.js and CKEDITOR/source/plugins/link/plugin.js
 					//	allowedContent: 'a[!href,title,target,data-ref]',
 					var widget = editor.widgets.focused,
+						isImageWidget = widget && widget.name == 'image',
 						selection = editor.getSelection(),
+						selectedElement = selection.getSelectedElement(),
 						ranges = selection.getRanges(),
 						links = [],
 						firstlink = false,
 						showLinkText = true,
 						dialogArgs = {};
 
-
-					var setArgsFromLink = function (link) {
-						//set initial attribute values
-						var href = link.getAttribute('href'),
-							ref = link.getAttribute('data-ref'),
-							title = link.getAttribute('title'),
-							type = false,
-							guid;
-
-						dialogArgs.link = href;
-
-						if (ref) {
-							var refParts = ref.split(':'),
-								guid = refParts[1];
-
-							switch (refParts[0]) {
-								case 'page':
-									type = 'page';
-									break;
-								case 'document':
-									type = 'document';
-									break;
-								case 'image':
-									type = 'image'
-									break;
-							}
+					if (!widget && selectedElement) {
+						widget = editor.widgets.getByElement(selectedElement);
+						if (widget && widget.name == 'image') {
+							isImageWidget = true;
+						} else {
+							widget = false;
 						}
-
-						if (type) {
-							dialogArgs['link-type'] = type;
-							dialogArgs['link-guid'] = guid;
-						} else if (href.substr(0, 7) == 'mailto:') {
-							type = 'email';
-							dialogArgs['link-type'] = type;
-						}
-						if (title) {
-							dialogArgs['link-title'] = title;
-						}
-
-						if (type != 'email' && firstlink.getAttribute('target') == '_blank') {
-							dialogArgs['open-in-new-tab'] = true;
-						}
-						//var dlname = firstlink.getAttribute('download');
-						//if (dlname) //what now?
-					};
+					}
 
 					// Widget cannot be enclosed in a link, i.e.
 					// <a>foo<inline widget/>bar</a>
-					if (widget && widget.name == 'image' && (widget.inline ? !widget.wrapper.getAscendant('a') : 1) && widget.parts.link) {
+					if (isImageWidget && (!widget.inline || !widget.wrapper.getAscendant('a')) && widget.parts.link) {
 						firstlink = widget.parts.link;
 						links.push(firstlink);
 						setArgsFromLink(firstlink);
-					//} else {
-					//	widget = false;
 					}
 
-					if (!widget) {
+					if (!isImageWidget) {
 						for (var i = 0; i < ranges.length; i++) {
 							var range = ranges[i];
 
@@ -113,22 +76,17 @@
 						dialogArgs.text = selection.getSelectedText();
 					}
 
-
-					var isFinished = false;
-					var finishDialogNav = function () {
-						if (isFinished) {
-							return;
-						}
-						isFinished = true;
-						editor.config.Dialog.off('linkSaved').off('onCancel');
-						editor.config.Dialog.closeSub();
-						editor.focusManager.unlock();
+					var Dialog = editor.config.Dialog;
+					var finish = function () {
+						Dialog.off('linkSaved');
+						return true;
 					};
 
-					editor.config.Dialog.off('linkSaved').on('linkSaved', function (info) {
+					Dialog.off('linkSaved').on('linkSaved', function (info) {
 						var newRanges = [],
 							setAttrs = {
-								href: info.href
+								href: info.href,
+								'data-cke-saved-href': info.href
 							},
 							removeAttrs = [];
 
@@ -138,16 +96,17 @@
 							case 'page':
 								if (info.guid) {
 									setAttrs['data-ref'] = info.type + ':' + info.guid;
+								} else {
+									removeAttrs.push('data-ref');
 								}
+								break;
+							default:
+								removeAttrs.push('data-ref');
 								break;
 						}
 						if (info.type == 'document') {
 							//add 'download' attribute
-							if (info.title) {
-								setAttrs['download'] = info.title;
-							} else {
-								setAttrs['download'] = true;
-							}
+							setAttrs['download'] = info.download || info.title || true;
 						} else {
 							removeAttrs.push('download');
 						}
@@ -156,7 +115,7 @@
 						} else {
 							removeAttrs.push('title');
 						}
-						if (info.openInNewTab) {
+						if (info.openInNewTab && info.type != 'document') {
 							setAttrs['target'] = '_blank';
 						} else {
 							removeAttrs.push('target');
@@ -182,7 +141,7 @@
 							return newStyle;
 						};
 
-						if (widget) {
+						if (isImageWidget) {
 							if (widget.parts.link) {
 								applyToLink(widget.parts.link);
 							} else {
@@ -190,9 +149,13 @@
 								for (var attr in setAttrs) {
 									element.setAttribute(attr, setAttrs[attr]);
 								}
-								widget.parts.image.insertBeforeMe(element);
+								element.replace(widget.parts.image);
 								widget.parts.image.move(element);
+								//widget.parts.image.insertBeforeMe(element);
+								//widget.parts.image.move(element);
 								widget.parts.link = element;
+
+								//if(widget)
 
 								//var newRange = editor.createRange(widget.parts.image);
 								//newRange.selectNodeContents(widget.parts.image);
@@ -202,7 +165,8 @@
 							}
 							var linkPlugin = CKEDITOR.plugins.link;
 							var data = linkPlugin.parseLinkAttributes(editor, widget.parts.link);
-							widget.data.link = data;
+							widget.setData('link', data);
+							//widget.data.link = data;
 							//newRanges.push(editor.createRange(widget.wrapper));
 						} else if (links.length) {
 							//update existing links
@@ -213,7 +177,6 @@
 								newRange.setStartBefore(element);
 								newRange.setEndAfter(element);
 								newRanges.push(newRange);
-								return newRange;
 							}
 						} else {
 							//create new links
@@ -265,17 +228,59 @@
 						if (newRanges.length) {
 							editor.getSelection().selectRanges(newRanges);
 						}
-						finishDialogNav();
+
+						editor.fire('saveSnapshot');
 					});
-					editor.config.Dialog.off('onCancel').on('onCancel', finishDialogNav);
-					editor.once('selectionChange', finishDialogNav);
-					editor.once('mode', finishDialogNav);
 
-					editor.focusManager.lock();
-					editor.config.Dialog.openSub('link-editor', dialogArgs);
-					editor.config.$scope && editor.config.$scope.$apply();
-
+					CKEDITOR.plugins.mpdialog.openDialog(editor, 'link-editor', dialogArgs, finish);
 					evt.cancel();
+
+					function setArgsFromLink(link) {
+						//set initial attribute values
+						var href = link.getAttribute('href'),
+							ref = link.getAttribute('data-ref'),
+							title = link.getAttribute('title'),
+							type = false,
+							guid;
+
+						dialogArgs.link = href;
+
+						if (ref) {
+							var refParts = ref.split(':'),
+								guid = refParts[1];
+
+							switch (refParts[0]) {
+								case 'page':
+									type = 'page';
+									break;
+								case 'document':
+									type = 'document';
+									var downloadAttr = link.getAttribute('download');
+									if (downloadAttr) {
+										dialogArgs['link-download-name'] = downloadAttr;
+									}
+									break;
+								case 'image':
+									type = 'image'
+									break;
+							}
+						}
+
+						if (type) {
+							dialogArgs['link-type'] = type;
+							dialogArgs['link-guid'] = guid;
+						} else if (href.substr(0, 7) == 'mailto:') {
+							type = 'email';
+							dialogArgs['link-type'] = type;
+						}
+						if (title) {
+							dialogArgs['link-title'] = title;
+						}
+
+						if (type != 'email' && link.getAttribute('target') == '_blank') {
+							dialogArgs['open-in-new-tab'] = true;
+						}
+					}
 				});
 
 				editor.on('doubleclick', function (evt) {

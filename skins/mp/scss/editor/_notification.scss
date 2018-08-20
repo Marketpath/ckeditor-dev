@@ -30,7 +30,7 @@
 	position: relative;
 	margin: 10px;
 	width: 300px;
-	color: $white;
+	color: $notification-color;
 	text-align: center;
 	opacity: 0.95;
 
@@ -41,31 +41,31 @@
 .cke_notification_message {
 	position: relative;
 	margin: 4px 23px 3px;
-	font-size: 0.8rem;
-	line-height: $base-font-size + 0px;
+	font-size: $small-size;
+	line-height: $normal-size;
 	z-index: 4;
 }
 
 .cke_notification_success
 {
-	background: $mid-green;
-	border: 1px solid $valid-green;
+	background: $success-bg;
+	border: 1px solid $success-border;
 }
 
 .cke_notification_warning
 {
-	background: $bg-red;
-	border: 1px solid $dark-red;
+	background: $warning-bg;
+	border: 1px solid $warning-border;
 }
 
 .cke_notification_info
 {
-	background: $light-blue;
-	border: 1px solid $dark-blue;
+	background: $info-bg;
+	border: 1px solid $info-border;
 
 	span.cke_notification_progress
 	{
-		background-color: $dark-blue;
+		background-color: $info-progress;
 		display: block;
 		padding: 0;
 		margin: 0;
@@ -77,29 +77,28 @@
 }
 
 .cke_notification_close {
-	color: $white;
+	color: $notification-color;
 	display: block;
 	position: absolute;
 	top: 0;
 	right: 0;
 	padding: 3px 3px 10px 8px;
-	font-size: 1rem;
+	font-size: $normal-size;
 	cursor: pointer;
 	z-index: 5;
 	text-decoration: none;
-	line-height: 1;
+	line-height: 1em;
 
 	&:after {
 		content: "\f00d";
-		font: normal normal normal 14px/1 FontAwesome;
-		font-size: 1rem;
+		font: normal normal normal $normal-size/1 FontAwesome;
 		text-rendering: auto;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 	}
 
 	&:hover {
-		color: $dialog-icon-color;
+		color: $link-color;
 	}
 
 	span {

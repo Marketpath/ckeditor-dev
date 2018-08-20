@@ -26,13 +26,12 @@
 
 
     CKEDITOR.plugins.add('liquidmarkup', {
-        //requires: 'liquid-markup',
-        //requires: 'widget',
+        requires: 'mpdialog',
         icons: 'liquidmarkup,mpForm,snippet,gallery',
         onLoad: function () {
-            CKEDITOR.addCss('liquid-markup[type]{display:block;background:#0097cf;color:#0097cf;border-width:2px;margin:10px 0;white-space:nowrap;overflow:hidden;}');
+			CKEDITOR.addCss('liquid-markup[type]{display:block;background:#0097cf;color:#0097cf;border-width:2px;margin:10px 0;white-space:nowrap;overflow:hidden;cursor:default;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}');
             CKEDITOR.addCss('liquid-markup[type]:before{content:attr(type) " " attr(title);font-size:1em;color:white;}');
-            CKEDITOR.addCss('liquid-markup,liquid-markup[type=custom]{display:inline-block;border:1px solid #e8761c;padding:0 4px;margin-bottom:10px;white-space:pre-wrap;overflow:initial;}');
+			CKEDITOR.addCss('liquid-markup,liquid-markup[type=custom]{display:inline-block;border:1px solid #e8761c;padding:0 4px;margin-bottom:10px;white-space:pre-wrap;overflow:initial;cursor:text;user-select:all;-webkit-user-select:all;-webkit-user-select:text;-moz-user-select:all;-ms-user-select:all;}');
             CKEDITOR.addCss('liquid-markup:before,liquid-markup[type=custom]:before{content:"{ }";color:#e8761c;font-size:9px;vertial-align:top;padding-right:4px;}');
         },
         init: function (editor) {
@@ -118,8 +117,9 @@
             }
 
             editor.on('doubleclick', function (evt) {
-                if (evt.data.element.is('liquid-markup')) {
-                    tryCommand();
+				if (evt.data.element.is('liquid-markup')) {
+					editor.getSelection().selectElement(evt.data.element);
+					tryCommand(); //evt.data.element);
                     evt.stop();
                 }
             });
@@ -129,11 +129,14 @@
             function tryCommand(type, name, cmd) {
                 var selection = editor.getSelection(),
                     range = selection.getRanges()[0],
-                    targetElement = range.startContainer,
+                    targetElement = selection.getSelectedElement() || selection.getStartElement() || range.startContainer,
                     editExisting = false,
                     isCustom = !type || type == 'custom',
                     initialMarkup = '{% comment %}This is Liquid Markup{% endcomment %}',
-                    service;
+					service;
+
+				//if (type && typeof type == 'object') {
+				//}
 
                 var finishCommand = function () {
                     editor.focus();
@@ -238,59 +241,26 @@
                         });
                     });
                 } else {
-                    var Dialog = editor.config.Dialog,
-                        maximizeCommand = editor.getCommand('maximize'),
-                        wasFullscreen = maximizeCommand && maximizeCommand.state == CKEDITOR.TRISTATE_ON,
-                        closeSubId = false;
+					var Dialog = editor.config.Dialog;
 
-                    if (wasFullscreen) {
-                        maximizeCommand.exec();
-                    }
+					var finish = function () {
+						Dialog.off('onEntitySelect');
+					};
 
+					Dialog.off('onEntitySelect').on('onEntitySelect', function (input) {
+						var guid = input ? typeof input === "string" ? input : input.GUID || input.item.GUID : void 0;
+						if (!guid) {
+							setMarkup('');
+						}
 
-                    var cancelEvents = 'change';
-                    var cancelBrowse = function () {
-                        Dialog.off('onEntitySelect').off('onCancel');
-                        if (closeSubId !== false) {
-                            Dialog.off('afterCloseSub', closeSubId);
-                            closeSubId = false;
-                        }
-                        Dialog.closeSub();
-                        editor.removeListener(cancelEvents, cancelBrowse);
-                    }
-                    editor.on(cancelEvents, cancelBrowse);
+						service.get(guid).then(function (obj) {
+							setMarkup('{% ' + type.toLowerCase() + ' output_to_template "' + guid + '" %}', obj.Name);
+						});
 
-                    var finish = function () {
-                        Dialog.off('onEntitySelect').off('onCancel');
-                        if (closeSubId !== false) {
-                            Dialog.off('afterCloseSub', closeSubId);
-                            closeSubId = false;
-                        }
-                        editor.removeListener(cancelEvents, cancelBrowse);
-                        if (wasFullscreen && maximizeCommand.state == CKEDITOR.TRISTATE_OFF) {
-                            maximizeCommand.exec();
-                        }
-                        return true;
-                    };
+						return true;
+					});
 
-                    Dialog.off('onEntitySelect').on('onEntitySelect', function (input) {
-                        var guid = input ? typeof input === "string" ? input : input.GUID || input.item.GUID : void 0;
-                        if (!guid) {
-                            setMarkup('');
-                        }
-
-                        service.get(guid).then(function (obj) {
-                            setMarkup('{% ' + type.toLowerCase() + ' output_to_template "' + guid + '" %}', obj.Name);
-                        });
-
-                        return finish();
-                    });
-                    Dialog.off('onCancel').on('onCancel', finish);
-                    closeSubId = Dialog.on('afterCloseSub', finish);
-                    Dialog.openSub('select-' + type.toLowerCase());
-                    if (editor.config.$scope) {
-                        editor.config.$scope.$apply();
-                    }
+					CKEDITOR.plugins.mpdialog.openDialog(editor, 'select-' + type.toLowerCase(), {}, finish);
                 }
             }
 

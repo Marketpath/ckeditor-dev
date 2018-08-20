@@ -58,6 +58,13 @@ CKEDITOR.plugins.add('ace', {
 			acee.setOptions(options);
 			acee.$blockScrolling = Infinity;
 
+			acee.on('focus', function () {
+				editor.fire('focus');
+			});
+			acee.on('blur', function () {
+				editor.fire('blur');
+			});
+
 			//container.style.position = 'absolute';
 			//container.style.top = 0;
 			//container.style.left = 0;
@@ -65,9 +72,6 @@ CKEDITOR.plugins.add('ace', {
 			//container.style.bottom = 0;
 			//container.style.height = '100%';
 			//container.style.margin = 0;
-
-			window.acee = acee;
-			window.session = session;
 
 			session.setValue(initData);
 

@@ -19,14 +19,14 @@
 
 .cke_chrome {
 	display: block;
-	border: 1px solid $input-bordercolor;
+	border: 1px solid $editor-bordercolor;
 	padding: 0;
 	visibility: inherit;
 }
 
 .cke_inner {
 	display: block;
-	background: $input-bg;
+	background: #FFF;
 	padding: 0;
 	-webkit-touch-callout: none;
 }
@@ -38,16 +38,16 @@
 }
 
 .cke_top {
-	border-bottom: 1px solid $input-bordercolor;
-	background: $dialog-bg;
+	border-bottom: 1px solid $editor-bordercolor;
+	background: $editor-bg;
 	position: relative;
 }
 
 .cke_bottom {
-	padding: 6px 10px;
+	padding: 3px 10px;
 	position: relative;
-	border-top: 1px solid $input-bordercolor;
-	background: $dialog-bg;
+	border-top: 1px solid $editor-bordercolor;
+	background: $editor-bg;
 
 	&:after {
 		display: block;
@@ -67,11 +67,15 @@
 	height: 0;
 	overflow: hidden;
 	border-width: 10px 10px 0 0;
-	border-color: transparent $input-bordercolor transparent transparent;
+	border-color: transparent $editor-bordercolor transparent transparent;
 	border-style: dashed solid dashed dashed;
 	font-size: 0;
 	vertical-align: bottom;
 	margin: 6px -4px 2px 0;
 	cursor: se-resize;
 	float: right;
+
+	&:hover {
+		border-right-color: $link-color;
+	}
 }
