@@ -85,7 +85,8 @@
 					Dialog.off('linkSaved').on('linkSaved', function (info) {
 						var newRanges = [],
 							setAttrs = {
-								href: info.href
+								href: info.href,
+								'data-cke-saved-href': info.href
 							},
 							removeAttrs = [];
 
@@ -176,7 +177,6 @@
 								newRange.setStartBefore(element);
 								newRange.setEndAfter(element);
 								newRanges.push(newRange);
-								return newRange;
 							}
 						} else {
 							//create new links
