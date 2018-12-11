@@ -32,7 +32,8 @@ CKEDITOR.plugins.add('ace', {
 			var options = {
 				theme: 'ace/theme/github',
 				mode: 'ace/mode/html',
-				showPrintMargin: false
+				showPrintMargin: false,
+				wrap: true
 			};
 
 			acee = window.ace.edit(div.$); //, options);

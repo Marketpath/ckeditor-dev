@@ -115,7 +115,7 @@
 						} else {
 							removeAttrs.push('title');
 						}
-						if (info.openInNewTab && info.type != 'document') {
+						if (info.openInNewTab) { // && info.type != 'document') {
 							setAttrs['target'] = '_blank';
 						} else {
 							removeAttrs.push('target');
@@ -277,7 +277,7 @@
 							dialogArgs['link-title'] = title;
 						}
 
-						if (type != 'email' && link.getAttribute('target') == '_blank') {
+						if (link.getAttribute('target') == '_blank') { //&& type != 'email'
 							dialogArgs['open-in-new-tab'] = true;
 						}
 					}

@@ -79,7 +79,7 @@
 						});
 					});
 				}
-				
+
 
 				function doEdit() {
 					var dialogArgs = {},
@@ -286,8 +286,9 @@
 								caption.removeStyle('margin-left');
 							}
 						}
+						editor.fire('saveSnapshot');
 					});
-					
+
 					var finish = function () {
 						Dialog.off('imgSaved');
 					};

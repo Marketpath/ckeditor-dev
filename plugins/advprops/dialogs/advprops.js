@@ -582,7 +582,7 @@ CKEDITOR.dialog.add('advprops', function (editor) {
 						var attrs = Object.keys(attributes).concat(Object.keys(updateMap));
 						attrs.sort();
 						matching = attrs.filter(function (attr, idx, arr) {
-							return (idx == 0 || attr != arr[idx - 1]) && attr.substr(0, nameLen) == name && attrIsAllowed(name);
+							return (idx == 0 || attr != arr[idx - 1]) && attr.substr(0, nameLen) == name && attrIsAllowed(attr);
 						});
 						break;
 					case '*':

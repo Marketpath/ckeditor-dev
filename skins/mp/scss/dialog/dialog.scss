@@ -265,10 +265,11 @@ a.cke_dialog_tab {
 }
 
 input.cke_dialog_ui_input_text,
-.cke_dialog_ui_input_file,
 input.cke_dialog_ui_input_password,
+input.cke_dialog_ui_input_tel,
+textarea.cke_dialog_ui_input_textarea,
 select.cke_dialog_ui_input_select,
-textarea.cke_dialog_ui_input_textarea {
+input.cke_dialog_ui_input_file {
 	background: #FFF;
 	border: 1px solid $input-bordercolor;
 	color: $plain-color;
@@ -294,7 +295,8 @@ textarea.cke_dialog_ui_input_textarea {
 }
 
 input.cke_dialog_ui_input_text,
-input.cke_dialog_ui_input_password {
+input.cke_dialog_ui_input_password,
+input.cke_dialog_ui_input_tel {
 	height: $dialog-field-height;
 	padding: 5px;
 }
