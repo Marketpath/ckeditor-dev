@@ -126,7 +126,7 @@
 		hidpi: true, // %REMOVE_LINE_CORE%
 		init: function( editor ) {
 			var filterType,
-				filtersFactory = filtersFactoryFactory();
+				filtersFactory = filtersFactoryFactory( editor );
 
 			if ( editor.config.forcePasteAsPlainText ) {
 				filterType = 'plain-text';
@@ -603,9 +603,11 @@
 						if ( pasteButton ) {
 							var buttonElement = CKEDITOR.document.getById( pasteButton._.id );
 
-							buttonElement.on( 'touchend', function() {
-								editor._.forcePasteDialog = true;
-							} );
+							if ( buttonElement ) {
+								buttonElement.on( 'touchend', function() {
+									editor._.forcePasteDialog = true;
+								} );
+							}
 						}
 					} );
 				} );
@@ -1328,7 +1330,7 @@
 		return switchEnterMode( config, data );
 	}
 
-	function filtersFactoryFactory() {
+	function filtersFactoryFactory( editor ) {
 		var filters = {};
 
 		function setUpTags() {
@@ -1344,7 +1346,7 @@
 		}
 
 		function createSemanticContentFilter() {
-			var filter = new CKEDITOR.filter();
+			var filter = new CKEDITOR.filter( editor, {} );
 
 			filter.allow( {
 				$1: {
@@ -1372,12 +1374,12 @@
 					// so it tries to replace it with an element created based on the active enter mode, eventually doing nothing.
 					//
 					// Now you can sleep well.
-					return filters.plainText || ( filters.plainText = new CKEDITOR.filter( 'br' ) );
+					return filters.plainText || ( filters.plainText = new CKEDITOR.filter( editor, 'br' ) );
 				} else if ( type == 'semantic-content' ) {
 					return filters.semanticContent || ( filters.semanticContent = createSemanticContentFilter() );
 				} else if ( type ) {
 					// Create filter based on rules (string or object).
-					return new CKEDITOR.filter( type );
+					return new CKEDITOR.filter( editor, type );
 				}
 
 				return null;
@@ -3088,7 +3090,7 @@
  *		CKEDITOR.config.clipboard_defaultContentType = 'text';
  *
  * See also the {@link CKEDITOR.editor#paste} event and read more about the integration with clipboard
- * in the [Clipboard Deep Dive guide](#!/guide/dev_clipboard).
+ * in the {@glink guide/dev_clipboard Clipboard Deep Dive guide}.
  *
  * @since 4.0
  * @cfg {'html'/'text'} [clipboard_defaultContentType='html']
@@ -3099,7 +3101,7 @@
  * Fired after the user initiated a paste action, but before the data is inserted into the editor.
  * The listeners to this event are able to process the content before its insertion into the document.
  *
- * Read more about the integration with clipboard in the [Clipboard Deep Dive guide](#!/guide/dev_clipboard).
+ * Read more about the integration with clipboard in the {@glink guide/dev_clipboard Clipboard Deep Dive guide}.
  *
  * See also:
  *
@@ -3164,7 +3166,7 @@
  * **Note:** To manipulate dropped data, use the {@link CKEDITOR.editor#paste} event.
  * Use the `drop` event only to control drag and drop operations (e.g. to prevent the ability to drop some content).
  *
- * Read more about integration with drag and drop in the [Clipboard Deep Dive guide](#!/guide/dev_clipboard).
+ * Read more about integration with drag and drop in the {@glink guide/dev_clipboard Clipboard Deep Dive guide}.
  *
  * See also:
  *
@@ -3194,7 +3196,7 @@
  * operation. For instance, the `widget` plugin uses this option to integrate its custom block widget drag and drop with
  * the entire system.
  *
- * Read more about integration with drag and drop in the [Clipboard Deep Dive guide](#!/guide/dev_clipboard).
+ * Read more about integration with drag and drop in the {@glink guide/dev_clipboard Clipboard Deep Dive guide}.
  *
  * See also:
  *
@@ -3215,7 +3217,7 @@
 /**
  * Facade for the native `dragend` event. Fired when the native `dragend` event occurs.
  *
- * Read more about integration with drag and drop in the [Clipboard Deep Dive guide](#!/guide/dev_clipboard).
+ * Read more about integration with drag and drop in the {@glink guide/dev_clipboard Clipboard Deep Dive guide}.
  *
  * See also:
  *
@@ -3241,7 +3243,7 @@
  * `style` and `class`) will be kept.
  * * `'h1 h2 p div'` &ndash; Custom rules compatible with {@link CKEDITOR.filter}.
  * * `null` &ndash; Content will not be filtered by the paste filter (but it still may be filtered
- * by [Advanced Content Filter](#!/guide/dev_advanced_content_filter)). This value can be used to
+ * by {@glink guide/dev_advanced_content_filter Advanced Content Filter}). This value can be used to
  * disable the paste filter in Chrome and Safari, where this option defaults to `'semantic-content'`.
  *
  * Example:
