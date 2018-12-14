@@ -29,3 +29,6 @@ bender-*.log
 
 !.github/*
 .DS_Store
+build-config-mp.js
+build-mp.sh
+config-mp.js
