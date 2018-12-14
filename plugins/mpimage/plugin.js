@@ -79,7 +79,7 @@
 						});
 					});
 				}
-				
+
 
 				function doEdit() {
 					var dialogArgs = {},
@@ -99,6 +99,17 @@
 							margin = img.getStyle('margin'),
 							borderWidth = img.getStyle('border-width'),
 							borderColor = img.getStyle('border-color');
+
+						if (!margin) {
+							var mt = img.getStyle('margin-top'),
+								mr = img.getStyle('margin-right'),
+								mb = img.getStyle('margin-bottom'),
+								ml = img.getStyle('margin-left');
+
+							if (mt || mr || mb || ml) {
+								margin = (mt || '0') + ' ' + (mr || '0') + ' ' + (mb || '0') + ' ' + (ml || '0');
+							}
+						}
 
 						//if (!width || !height) {
 						var dimensions = plugin.getNatural(img);
@@ -286,8 +297,9 @@
 								caption.removeStyle('margin-left');
 							}
 						}
+						editor.fire('saveSnapshot');
 					});
-					
+
 					var finish = function () {
 						Dialog.off('imgSaved');
 					};

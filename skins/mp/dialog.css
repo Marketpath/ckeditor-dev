@@ -213,10 +213,11 @@ a.cke_dialog_tab {
   width: 100% !important; }
 
 input.cke_dialog_ui_input_text,
-.cke_dialog_ui_input_file,
 input.cke_dialog_ui_input_password,
+input.cke_dialog_ui_input_tel,
+textarea.cke_dialog_ui_input_textarea,
 select.cke_dialog_ui_input_select,
-textarea.cke_dialog_ui_input_textarea {
+input.cke_dialog_ui_input_file {
   background: #FFF;
   border: 1px solid #b3b3b3;
   color: #4d4d4d;
@@ -225,29 +226,33 @@ textarea.cke_dialog_ui_input_textarea {
   cursor: text;
   box-sizing: border-box; }
   input.cke_dialog_ui_input_text:focus,
-  .cke_dialog_ui_input_file:focus,
   input.cke_dialog_ui_input_password:focus,
+  input.cke_dialog_ui_input_tel:focus,
+  textarea.cke_dialog_ui_input_textarea:focus,
   select.cke_dialog_ui_input_select:focus,
-  textarea.cke_dialog_ui_input_textarea:focus {
+  input.cke_dialog_ui_input_file:focus {
     outline: none;
     box-shadow: 0 0 3px 1px #0097cf;
     position: relative; }
   input.cke_dialog_ui_input_text.cke_disabled,
-  .cke_dialog_ui_input_file.cke_disabled,
   input.cke_dialog_ui_input_password.cke_disabled,
+  input.cke_dialog_ui_input_tel.cke_disabled,
+  textarea.cke_dialog_ui_input_textarea.cke_disabled,
   select.cke_dialog_ui_input_select.cke_disabled,
-  textarea.cke_dialog_ui_input_textarea.cke_disabled {
+  input.cke_dialog_ui_input_file.cke_disabled {
     border: 1px dashed #CCC;
     cursor: default; }
     input.cke_dialog_ui_input_text.cke_disabled:focus,
-    .cke_dialog_ui_input_file.cke_disabled:focus,
     input.cke_dialog_ui_input_password.cke_disabled:focus,
+    input.cke_dialog_ui_input_tel.cke_disabled:focus,
+    textarea.cke_dialog_ui_input_textarea.cke_disabled:focus,
     select.cke_dialog_ui_input_select.cke_disabled:focus,
-    textarea.cke_dialog_ui_input_textarea.cke_disabled:focus {
+    input.cke_dialog_ui_input_file.cke_disabled:focus {
       box-shadow: none; }
 
 input.cke_dialog_ui_input_text,
-input.cke_dialog_ui_input_password {
+input.cke_dialog_ui_input_password,
+input.cke_dialog_ui_input_tel {
   height: 34px;
   padding: 5px; }
 
