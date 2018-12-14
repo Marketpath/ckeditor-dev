@@ -480,20 +480,21 @@ CKEDITOR.dom.element.clearMarkers = function( database, element, removeFromDatab
 		 * Retrieve the bounding rectangle of the current element, in pixels,
 		 * relative to the upper-left corner of the browser's client area.
 		 *
-		 * Since 4.10.0 you can pass additional parameter if the function should give absolute element position which can be used for positioning elements
-		 * inside scrollable areas.
+		 * Since 4.10.0 you can pass an additional parameter if the function should return an absolute element position that can be used for
+		 * positioning elements inside scrollable areas.
 		 *
-		 * E.g. you could use this function with {@link CKEDITOR.dom.window#getFrame editor's window frame} to
-		 * calculate the absolute rectangle of the visible area of the editor's viewport.
-		 * The retrieved absolute rectangle could be used to position elements like toolbars or notifications (elements outside an editor)
-		 * to always keep them inside an editor viewport independently from the scroll position.
+		 * For example, you can use this function with the {@link CKEDITOR.dom.window#getFrame editor's window frame} to
+		 * calculate the absolute rectangle of the visible area of the editor viewport.
+		 * The retrieved absolute rectangle can be used to position elements like toolbars or notifications (elements outside the editor)
+		 * to always keep them inside the editor viewport independently from the scroll position.
 		 *
 		 * ```javascript
 		 * var frame = editor.window.getFrame();
 		 * frame.getClientRect( true );
 		 * ```
 		 *
-		 * @param {Boolean} [isAbsolute=false] The function will retrieve an absolute rectangle of the element i.e. position relative to the upper-left corner of the topmost viewport. This option is available since 4.10.0.
+		 * @param {Boolean} [isAbsolute=false] The function will retrieve an absolute rectangle of the element, i.e. the position relative
+		 * to the upper-left corner of the topmost viewport. This option is available since 4.10.0.
 		 * @returns {CKEDITOR.dom.rect} The dimensions of the DOM element.
 		 */
 		getClientRect: function( isAbsolute ) {
@@ -507,36 +508,7 @@ CKEDITOR.dom.element.clearMarkers = function( database, element, removeFromDatab
 				return elementRect;
 			}
 
-			appendParentFramePosition( this.getWindow().getFrame() );
-
-			var winGlobalScroll = CKEDITOR.document.getWindow().getScrollPosition();
-
-			elementRect.top += winGlobalScroll.y;
-			elementRect.left += winGlobalScroll.x;
-
-			elementRect.y += winGlobalScroll.y;
-			elementRect.x += winGlobalScroll.x;
-
-			elementRect.right = elementRect.left + elementRect.width;
-			elementRect.bottom = elementRect.top + elementRect.height;
-
-			return elementRect;
-
-			function appendParentFramePosition( frame ) {
-				if ( !frame ) {
-					return;
-				}
-
-				var frameRect = frame.getClientRect();
-
-				elementRect.top += frameRect.top;
-				elementRect.left += frameRect.left;
-
-				elementRect.x += frameRect.x;
-				elementRect.y += frameRect.y;
-
-				appendParentFramePosition( frame.getWindow().getFrame() );
-			}
+			return CKEDITOR.tools.getAbsoluteRectPosition( this.getWindow(), elementRect );
 		},
 
 		/**
@@ -2049,7 +2021,7 @@ CKEDITOR.dom.element.clearMarkers = function( database, element, removeFromDatab
 		 *
 		 *	* Not available in IE7.
 		 *	* Returned list is not a live collection (like a result of native `querySelectorAll`).
-		 *	* Unlike native `querySelectorAll` this method ensures selector contextualization. This is:
+		 *	* Unlike the native `querySelectorAll` this method ensures selector contextualization. This is:
 		 *
 		 *			HTML:		'<body><div><i>foo</i></div></body>'
 		 *			Native:		div.querySelectorAll( 'body i' ) // ->		[ <i>foo</i> ]
@@ -2057,7 +2029,7 @@ CKEDITOR.dom.element.clearMarkers = function( database, element, removeFromDatab
 		 *						div.find( 'i' ) // ->						[ <i>foo</i> ]
 		 *
 		 * @since 4.3
-		 * @param {String} selector
+		 * @param {String} selector A valid [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors).
 		 * @returns {CKEDITOR.dom.nodeList}
 		 */
 		find: function( selector ) {
@@ -2072,12 +2044,12 @@ CKEDITOR.dom.element.clearMarkers = function( database, element, removeFromDatab
 		},
 
 		/**
-		 * Returns first element within this element that matches specified `selector`.
+		 * Returns the first element within this element that matches the specified `selector`.
 		 *
 		 * **Notes:**
 		 *
 		 *	* Not available in IE7.
-		 *	* Unlike native `querySelectorAll` this method ensures selector contextualization. This is:
+		 *	* Unlike the native `querySelector` this method ensures selector contextualization. This is:
 		 *
 		 *			HTML:		'<body><div><i>foo</i></div></body>'
 		 *			Native:		div.querySelector( 'body i' ) // ->			<i>foo</i>
@@ -2085,7 +2057,7 @@ CKEDITOR.dom.element.clearMarkers = function( database, element, removeFromDatab
 		 *						div.findOne( 'i' ) // ->					<i>foo</i>
 		 *
 		 * @since 4.3
-		 * @param {String} selector
+		 * @param {String} selector A valid [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors).
 		 * @returns {CKEDITOR.dom.element}
 		 */
 		findOne: function( selector ) {
