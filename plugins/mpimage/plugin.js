@@ -304,7 +304,11 @@
 						Dialog.off('imgSaved');
 					};
 
-					CKEDITOR.plugins.mpdialog.openDialog(editor, 'img-editor', dialogArgs, finish);
+					editor.execCommand('openDialog', {
+						name: 'img-editor',
+						attrs: dialogArgs,
+						afterClose: finish
+					});
 				}
 			});
 		}

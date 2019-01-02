@@ -232,7 +232,11 @@
 						editor.fire('saveSnapshot');
 					});
 
-					CKEDITOR.plugins.mpdialog.openDialog(editor, 'link-editor', dialogArgs, finish);
+					editor.execCommand('openDialog', {
+						name: 'link-editor',
+						attrs: dialogArgs,
+						afterClose: finish
+					});
 					evt.cancel();
 
 					function setArgsFromLink(link) {

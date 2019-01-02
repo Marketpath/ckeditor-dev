@@ -260,7 +260,10 @@
 						return true;
 					});
 
-					CKEDITOR.plugins.mpdialog.openDialog(editor, 'select-' + type.toLowerCase(), {}, finish);
+					editor.execCommand('openDialog', {
+						name: 'select-' + type.toLowerCase(),
+						afterClose: finish
+					});
                 }
             }
 
