@@ -1,0 +1,89 @@
+/// <reference path="editor.scss" />
+
+/*
++-- .cke_panel_block.cke_colorblock --+
+| +-- a.cke_colorauto --------------+ |
+| | +-- table --------------------+ | |
+| | |       AUTOMATIC COLOR       | | |
+| | +-----------------------------+ | |
+| +---------------------------------+ |
+| +-- table ------------------------+ |
+| |          COLOR PALETTE          | |
+| |---------------------------------| |
+| |          "More Colors"          | |
+| +---------------------------------+ |
++-------------------------------------+
+*/
+
+.cke_colorblock {
+	padding: 5px;
+	font: $editor-font;
+	font-size: $small-size;
+
+	a {
+		text-decoration: none;
+		color: $main-color; // $plain-color;
+	}
+
+	td {
+		text-align: center;
+	}
+}
+
+.cke_colorbox {
+	width: 20px;
+	height: 20px;
+	float: left;
+}
+
+a.cke_colorbox {
+	padding: 2px;
+
+	&:hover,
+	&:focus,
+	&:active {
+		outline: none;
+		padding: 0;
+		border: 2px solid $hover-bordercolor;
+	}
+}
+
+a.cke_colorauto,
+a.cke_colormore {
+	display: block;
+	cursor: pointer;
+	line-height: 20px;
+	border: 1px solid transparent;
+
+	&:hover,
+	&:focus,
+	&:active {
+		outline: none;
+		border-color: $hover-bordercolor;
+		background-color: $hover-bg;
+		color: $link-color;
+	}
+}
+
+a.cke_colorauto {
+	margin-bottom: 10px;
+	border-left-width: 2px;
+}
+
+a.cke_colormore {
+	margin-top: 10px;
+}
+
+span.cke_colorbox[style*="#ffffff"],
+span.cke_colorbox[style*="#FFFFFF"],
+span.cke_colorbox[style="background-color:#fff"],
+span.cke_colorbox[style="background-color:#FFF"],
+span.cke_colorbox[style*="rgb(255,255,255)"],
+span.cke_colorbox[style*="rgb(255, 255, 255)"],
+span.cke_colorbox[style*="rgba(0,0,0,0)"],
+span.cke_colorbox[style*="rgba(0, 0, 0, 0)"] {
+	border: 1px solid $editor-bordercolor;
+	width: 18px;
+	height: 18px;
+	background-color: #FFF !important;
+}

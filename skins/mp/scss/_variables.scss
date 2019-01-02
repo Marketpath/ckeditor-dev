@@ -1,0 +1,78 @@
+////////////////////
+// Colors
+////////////////////
+$editor-bg: #f7f7f7 !default;
+$editor-bordercolor: #CCC !default;
+$main-color: #00487b !default;
+$link-color: #e8761c !default;
+$plain-color: #4d4d4d !default;
+$hover-bg: #e6e6e6 !default; //#e5e5e5 !default;
+$hover-dark-bg: #d9d9d9 !default;
+$hover-bordercolor: #CCC !default;
+$button-on-bg: #d9d9d9 !default;
+$menu-button-bg: #ebebeb !default;
+$menu-button-hover-bg: #d9d9d9 !default;
+$menu-button-shortcut-color: #b3b3b3 !default;
+$collapsebutton-color: #b3b3b3 !default;
+
+$notification-color: #FFF !default;
+$warning-bg: #9f6767 !default;
+$warning-border: #910000 !default;
+$success-bg: #5a9e4d !default;
+$success-border: #226011 !default;
+$info-bg: #0097cf !default;
+$info-border: #00487b !default;
+$info-progress: #01375d !default;
+
+$dialog-bordercolor: #b3b3b3 !default;
+$dialog-headercolor: #0097cf !default;
+$dialog-footercolor: #e5e5e5 !default;
+$input-focus-color: #0097cf !default;
+$input-bordercolor: #b3b3b3 !default;
+$disabled-bordercolor: #CCC !default;
+
+$disabled-buttoncolor: #b3b3b3 !default;
+$disabled-buttonbg: #e6e6e6 !default;
+$ok-color: #FFF !default;
+$ok-bg: #e8761c !default;
+$ok-hover-bg: #eaa976 !default;
+
+
+////////////////////
+// Font
+////////////////////
+$small-size: 12px !default;
+$normal-size: 16px !default;
+
+$editor-font-family: "proxima-nova",sans-serif !default;
+$editor-font: normal normal normal #{$normal-size}/#{$normal-size} $editor-font-family !default;
+
+$dialog-line-height: 1.5 * $normal-size;
+$dialog-field-height: $dialog-line-height + 10px;
+
+
+////////////////////
+// Mixins
+////////////////////
+@mixin arrow($size, $dir: down, $color: $editor-bordercolor) {
+	display: inline-block;
+	width: 0;
+	height: 0;
+	border-width: $size;
+	border-style: solid;
+	@include arrow-color($dir, $color);
+}
+@mixin arrow-color($dir, $color) {
+	@if $dir == down {
+		border-color: $color transparent transparent transparent;
+	}
+	@else if $dir == up {
+		border-color: transparent transparent $color transparent;
+	}
+	@else if $dir == left {
+		border-color: transparent $color transparent transparent;
+	}
+	@else if $dir == right {
+		border-color: transparent transparent transparent $color;
+	}
+}

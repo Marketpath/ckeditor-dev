@@ -1,0 +1,127 @@
+/// <reference path="editor.scss" />
+
+/*
++---div.cke_notification cke_notification_info--------------------------+
+|                                                                       |
+| +---div.cke_notification_progress-----------------------------------+ |
+| |                                                                   | |
+| +-------------------------------------------------------------------+ |
+|                                                                       |
+| +---p.cke_notification_message--------------------------------------+ |
+| | Foo                                                               | |
+| +-------------------------------------------------------------------+ |
+|                                                                       |
+| +---a.cke_notification_close----------------------------------------+ |
+| | +---span.cke_label----------------------------------------------+ | |
+| | | X                                                             | | |
+| | +---------------------------------------------------------------+ | |
+| +-------------------------------------------------------------------+ |
+|                                                                       |
++-----------------------------------------------------------------------+
+*/
+
+.cke_notifications_area
+{
+	pointer-events: none;
+}
+.cke_notification
+{
+	pointer-events: auto;
+	position: relative;
+	margin: 10px;
+	width: 300px;
+	color: $notification-color;
+	text-align: center;
+	opacity: 0.95;
+
+	-webkit-animation: fadeIn 0.7s;
+	animation: fadeIn 0.7s;
+}
+
+.cke_notification_message {
+	position: relative;
+	margin: 4px 23px 3px;
+	font-size: $small-size;
+	line-height: $normal-size;
+	z-index: 4;
+}
+
+.cke_notification_success
+{
+	background: $success-bg;
+	border: 1px solid $success-border;
+}
+
+.cke_notification_warning
+{
+	background: $warning-bg;
+	border: 1px solid $warning-border;
+}
+
+.cke_notification_info
+{
+	background: $info-bg;
+	border: 1px solid $info-border;
+
+	span.cke_notification_progress
+	{
+		background-color: $info-progress;
+		display: block;
+		padding: 0;
+		margin: 0;
+		height: 100%;
+		overflow: hidden;
+		position: absolute;
+		z-index: 1;
+	}
+}
+
+.cke_notification_close {
+	color: $notification-color;
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 3px 3px 10px 8px;
+	font-size: $normal-size;
+	cursor: pointer;
+	z-index: 5;
+	text-decoration: none;
+	line-height: 1em;
+
+	&:after {
+		content: "\f00d";
+		font: normal normal normal $normal-size/1 FontAwesome;
+		text-rendering: auto;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	&:hover {
+		color: $link-color;
+	}
+
+	span {
+		display: none;
+	}
+}
+
+@-webkit-keyframes fadeIn {
+	from {
+		opacity: 0.4;
+	}
+
+	to {
+		opacity: 0.95;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0.4;
+	}
+
+	to {
+		opacity: 0.95;
+	}
+}

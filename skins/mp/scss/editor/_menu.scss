@@ -1,0 +1,113 @@
+/// <reference path="editor.scss" />
+
+/*
++-- .cke_menu -----------------+
+| +-- .cke_menuitem  --------+ |
+| | +-- .cke_menubutton ---+ | |
+| | |                      | | |
+| | +----------------------+ | |
+| +--------------------------+ |
+| +-- .cke_menuseparator ----+ |
+| ...                          |
++------------------------------+
+
++-- .cke_menubutton -------------------------------------------------------------------------+
+| +-- .cke_menubutton_inner ---------------------------------------------------------------+ |
+| | +-- .cke_menubutton_icon ---+ +-- .cke_menubutton_label --+ +-- .cke_cke_menuarrow --+ | |
+| | | +-- .cke_button_icon ---+ | |                           | |                        | | |
+| | | |                       | | |                           | |                        | | |
+| | | +-----------------------+ | |                           | |                        | | |
+| | +---------------------------+ +---------------------------+ +------------------------+ | |
+| +----------------------------------------------------------------------------------------+ |
++--------------------------------------------------------------------------------------------+
+*/
+
+a.cke_menubutton {
+	display: block;
+	//color: $dialog-link-color;
+	cursor: pointer;
+
+	* {
+		cursor: inherit;
+	}
+
+	&_on {
+		background: $button-on-bg;
+	}
+
+	&:hover,
+	&:focus,
+	&:active {
+		background: $hover-bg;
+		color: $link-color;
+		outline: none;
+
+		.cke_menubutton_icon {
+			background-color: $menu-button-hover-bg;
+		}
+	}
+
+	&_disabled {
+		opacity: 0.3;
+		cursor: default;
+
+		&:hover,
+		&:focus,
+		&:active {
+			background: none;
+			color: inherit;
+
+			.cke_menubutton_icon {
+				background-color: $menu-button-bg;
+			}
+		}
+	}
+}
+
+.cke_menuseparator {
+	background-color: $editor-bordercolor;
+	height: 1px;
+}
+
+.cke_menubutton_inner {
+	display: table-row;
+}
+
+.cke_menubutton_icon,
+.cke_menubutton_label,
+.cke_menuarrow {
+	display: table-cell;
+}
+
+.cke_menubutton_icon {
+	background-color: $menu-button-bg;
+	padding: 6px 4px;
+}
+
+.cke_menubutton_label {
+	padding: 0 5px;
+	width: 100%;
+	vertical-align: middle;
+}
+
+.cke_menubutton_shortcut {
+	color: $menu-button-shortcut-color;
+}
+
+.cke_menuarrow {
+	padding: 0 5px;
+
+	span {
+		//overflow: hidden;
+		font-size: 0;
+		cursor: pointer;
+		vertical-align: middle;
+		@include arrow(3px, right);
+	}
+}
+
+.cke_panel_frame {
+	.cke_menubutton_label {
+		display: none;
+	}
+}

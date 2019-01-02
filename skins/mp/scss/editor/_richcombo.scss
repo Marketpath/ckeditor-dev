@@ -1,0 +1,69 @@
+/// <reference path="editor.scss" />
+
+/*
++-- .cke_combo----------------------------------------------------------------------+
+| +-- .cke_combo_label --+ +-- .cke_combo_button ---------------------------------+ |
+| |                      | | +-- .cke_combo_text --+ +-- .cke_combo_open -------+ | |
+| |                      | | |                     | | +-- .cke_combo_arrow --+ | | |
+| |                      | | |                     | | |                      | | | |
+| |                      | | |                     | | +----------------------+ | | |
+| |                      | | +---------------------+ +--------------------------+ | |
+| +----------------------+ +------------------------------------------------------+ |
++-----------------------------------------------------------------------------------+
+*/
+
+.cke_combo {
+	margin-left: 5px;
+
+	&_on {
+		.cke_combo_button {
+			background: $button-on-bg;
+		}
+	}
+
+	&_disabled {
+		opacity: 0.3;
+	}
+}
+
+.cke_combo_label {
+	display: none;
+}
+
+a.cke_combo_button {
+	display: inline-block;
+	border: 1px solid $editor-bordercolor;
+	background: #FFF;
+	cursor: pointer;
+
+	&:hover,
+	&:focus,
+	&:active {
+		background: $hover-bg;
+		outline: none;
+	}
+}
+
+.cke_combo_text {
+	cursor: pointer;
+	display: inline-block;
+	vertical-align: middle;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 80px;
+	margin-left: 5px;
+}
+
+.cke_combo_open {
+	cursor: pointer;
+	display: inline-block;
+	font-size: 0;
+	vertical-align: middle;
+	padding: 3px;
+	border-left: 1px solid $editor-bordercolor;
+}
+
+.cke_combo_arrow {
+	cursor: pointer;
+	@include arrow(3px, down);
+}
