@@ -17,6 +17,7 @@
 						links = [],
 						firstlink = false,
 						showLinkText = true,
+						protectedClasses = [],
 						dialogArgs = {};
 
 					if (!widget && selectedElement) {
@@ -71,18 +72,26 @@
 						showLinkText = false;
 						dialogArgs['hide-text'] = true;
 					} else if (firstlink) {
-						dialogArgs.text = firstlink.getText();
+						var numChildren = firstlink.getChildCount();
+						if (numChildren == 1) {
+							var child = firstlink.getChild(0);
+							if (child.type == CKEDITOR.NODE_TEXT) {
+								dialogArgs.text = child.getText();
+							} else {
+								showLinkText = false;
+								dialogArgs['hide-text'] = true;
+							}
+						} else if(numChildren > 1) {
+							showLinkText = false;
+							dialogArgs['hide-text'] = true;
+						}
 					} else {
 						dialogArgs.text = selection.getSelectedText();
 					}
 
 					var Dialog = editor.config.Dialog;
-					var finish = function () {
-						Dialog.off('linkSaved');
-						return true;
-					};
 
-					Dialog.off('linkSaved').on('linkSaved', function (info) {
+					var onFinishId = Dialog.off('linkSaved').on('linkSaved', function (info) {
 						var newRanges = [],
 							setAttrs = {
 								href: info.href,
@@ -114,6 +123,17 @@
 							setAttrs['title'] = info.title;
 						} else {
 							removeAttrs.push('title');
+						}
+						if (info.hasOwnProperty('classname')) {
+							//in case the user has not loaded the latest version of marketpath CMS yet
+							if (info.classname) {
+								protectedClasses.push(info.classname);
+							}
+							if (protectedClasses.length) {
+								setAttrs['class'] = protectedClasses.join(' ');
+							} else {
+								removeAttrs.push('class');
+							}
 						}
 						if (info.openInNewTab) { // && info.type != 'document') {
 							setAttrs['target'] = '_blank';
@@ -232,11 +252,12 @@
 						editor.fire('saveSnapshot');
 					});
 
-					editor.execCommand('openDialog', {
-						name: 'link-editor',
-						attrs: dialogArgs,
-						afterClose: finish
-					});
+					var finish = function () {
+						Dialog.off('linkSaved', onFinishId);
+						return true;
+					};
+
+					editor.mpdialog.openDialog('link-editor', dialogArgs, finish);
 					evt.cancel();
 
 					function setArgsFromLink(link) {
@@ -244,8 +265,9 @@
 						var href = link.getAttribute('href'),
 							ref = link.getAttribute('data-ref'),
 							title = link.getAttribute('title'),
+							classname = link.getAttribute('class'),
 							type = false,
-							guid;
+							guid = false;
 
 						dialogArgs.link = href;
 
@@ -265,20 +287,43 @@
 									}
 									break;
 								case 'image':
-									type = 'image'
+									type = 'image';
+									break;
+								default:
+									type = 'custom';
+									guid = false;
 									break;
 							}
+						} else if (href) {
+							type = (href.substr(0, 7) == 'mailto:') ? 'email' : 'custom';
 						}
 
 						if (type) {
 							dialogArgs['link-type'] = type;
-							dialogArgs['link-guid'] = guid;
-						} else if (href.substr(0, 7) == 'mailto:') {
-							type = 'email';
-							dialogArgs['link-type'] = type;
+							if (guid) {
+								dialogArgs['link-guid'] = guid;
+							}
 						}
 						if (title) {
 							dialogArgs['link-title'] = title;
+						}
+						if (classname) {
+							var allClasses = classname.split(' '),
+								finalClasses = [];
+
+							for (var i = 0; i < allClasses.length; i++) {
+								//ignore empty classnames (extra spaces in the class attribute)
+								if (allClasses[i]) {
+									if (allClasses[i].substr(0, 4) == 'cke_') {
+										protectedClasses.push(allClasses[i]);
+									} else {
+										finalClasses.push(allClasses[i]);
+									}
+								}
+							}
+							if (finalClasses.length) {
+								dialogArgs['link-class'] = finalClasses.join(' ');
+							}
 						}
 
 						if (link.getAttribute('target') == '_blank') { //&& type != 'email'

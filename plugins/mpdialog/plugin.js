@@ -3,88 +3,113 @@
 		//this is a really bad place to "bootstrap" these icons. 
 		icons: 'tablecell,tablecell_delete,tablecell_insertAfter,tablecell_insertBefore,tablecell_merge,tablecell_merge_down,tablecell_merge_right,tablecell_split_vertical,tablecell_split_horizontal,tablecell_properties,tablecolumn,tablecolumn_delete,tablecolumn_insertAfter,tablecolumn_insertBefore,tabledelete,tablerow,tablerow_delete,tablerow_insertAfter,tablerow_insertBefore',
 		init: function (editor) {
-			var browsing = false,
-				wasFullscreen = false,
-				closeSubId = false,
-				afterClose = false;
-
-			editor.addCommand('openDialog', {
-				canUndo: false,
-				//contextSensitive: false,
-				//editorFocus: false,
-				exec: openDialog
-			});
-			editor.addCommand('closeDialog', {
-				canUndo: false,
-				exec: endBrowse
-			});
-
-			function openDialog(editor, data) {
-				if (browsing) {
-					endBrowse();
-				}
-
-				var Dialog = editor.config.Dialog;
-				if (!Dialog || !data.name) {
-					return false;
-				}
-
-				afterClose = typeof data.afterClose == 'function' ? data.afterClose : false;
-				browsing = true;
-				editor.focusManager.lock();
-
-				var maximizeCommand = editor.getCommand('maximize');
-				wasFullscreen = maximizeCommand && maximizeCommand.state == CKEDITOR.TRISTATE_ON;
-				if (wasFullscreen) {
-					maximizeCommand.exec();
-				}
-
-				editor.on('change', endBrowse);
-				editor.on('selectionChange', endBrowse);
-				editor.on('mode', endBrowse);
-
-				closeSubId = Dialog.on('afterCloseSub', endBrowse);
-				Dialog.off('onCancel').on('onCancel', endBrowse);
-
-				Dialog.openSub(data.name, data.attrs);
-				if (editor.config.$scope) {
-					editor.config.$scope.$apply();
-				}
-			}
-
-			function endBrowse() {
-				browsing = false;
-
-				var Dialog = editor.config.Dialog;
-				if (!Dialog) {
-					return;
-				}
-
-				editor.removeListener('change', endBrowse);
-				editor.removeListener('selectionChange', endBrowse);
-				editor.removeListener('mode', endBrowse);
-
-				Dialog.off('onCancel');
-				if (closeSubId !== false) {
-					Dialog.off('afterCloseSub', closeSubId);
-					closeSubId = false;
-				}
-
-				if (wasFullscreen) {
-					var maximizeCommand = editor.getCommand('maximize');
-					if (maximizeCommand.state == CKEDITOR.TRISTATE_OFF) {
-						maximizeCommand.exec();
+			editor.mpdialog = {
+				browsing: false,
+				wasFullscreen: false,
+				closeSubId: false,
+				onCancelId: false,
+				afterClose: false,
+				openDialog: function (name, attrs, afterClose) {
+					var Dialog = editor.config.Dialog;
+					if (!Dialog) {
+						return false;
 					}
-				}
 
-				if (typeof afterClose == "function") {
-					afterClose();
-					afterClose = false;
-				}
+					//console.log('Opening ' + editor.id);
 
-				Dialog.closeSub();
-				editor.focusManager.unlock();
-			}
+					if (editor.mpdialog.browsing) {
+						editor.mpdialog.endBrowse({ listenerData: { name: 'openDialog', forceclose: true } });
+					}
+
+					editor.mpdialog.afterClose = afterClose;
+					editor.mpdialog.browsing = true;
+					editor.focusManager.lock();
+
+					var os = Dialog.openSub(name, attrs);
+					var afterOpen = function () {
+						//console.log('Opened ' + editor.id);
+
+						var firstEditor = Dialog.get('ckeditor_browsing_instance');
+						if (firstEditor && firstEditor != editor && firstEditor.mpdialog && firstEditor.mpdialog.wasFullscreen) {
+							var minimizeCommand = firstEditor.getCommand('maximize');
+							if (minimizeCommand && minimizeCommand.state == CKEDITOR.TRISTATE_ON) {
+								minimizeCommand.exec();
+							}
+						}
+
+						Dialog.set('ckeditor_browsing_instance', editor);
+
+						var maximizeCommand = editor.getCommand('maximize');
+						editor.mpdialog.wasFullscreen = maximizeCommand && maximizeCommand.state == CKEDITOR.TRISTATE_ON;
+						if (editor.mpdialog.wasFullscreen) {
+							maximizeCommand.exec();
+						}
+
+						editor.on('change', editor.mpdialog.endBrowse, null, { name: 'change', forceclose: true });
+						editor.on('selectionChange', editor.mpdialog.endBrowse, null, { name: 'selectionChange', forceclose: true });
+						editor.on('mode', editor.mpdialog.endBrowse, null, { name: 'mode', forceclose: true });
+
+						editor.mpdialog.closeSubId = Dialog.on('afterCloseSub', function () {
+							editor.mpdialog.endBrowse({ listenerData: { name: 'afterCloseSub', forceclose: false } });
+						});
+						editor.mpdialog.onCancelId = Dialog.on('onCancel', function () {
+							editor.mpdialog.endBrowse({ listenerData: { name: 'onCancel', forceclose: true } });
+						});
+
+						if (editor.config.$scope) {
+							editor.config.$scope.$evalAsync();
+						}
+					};
+					if (typeof os == 'object' && typeof os.then == 'function') {
+						os.then(afterOpen, function () {
+							editor.mpdialog.browsing = false;
+							editor.focusManager.unlock();
+						})
+					} else {
+						afterOpen();
+					}
+				},
+				endBrowse: function (event) {
+					var eventname = event && event.listenerData && event.listenerData.name,
+						forceclose = event && event.listenerData && event.listenerData.forceclose;
+
+					var Dialog = editor.config.Dialog;
+					if (!Dialog || (!forceclose && Dialog.get('ckeditor_browsing_instance') != editor)) {
+						return;
+					}
+
+					//console.log('Closing ' + editor.id + (eventname ? ' from ' + eventname : ''));
+					editor.mpdialog.browsing = false;
+
+					editor.removeListener('change', editor.mpdialog.endBrowse);
+					editor.removeListener('selectionChange', editor.mpdialog.endBrowse);
+					editor.removeListener('mode', editor.mpdialog.endBrowse);
+
+					if (editor.mpdialog.closeSubId !== false) {
+						Dialog.off('afterCloseSub', editor.mpdialog.closeSubId);
+						editor.mpdialog.closeSubId = false;
+					}
+					if (editor.mpdialog.onCancelId !== false) {
+						Dialog.off('onCancel', editor.mpdialog.onCancelId);
+						editor.mpdialog.onCancelId = false;
+					}
+
+					if (editor.mpdialog.wasFullscreen) {
+						var maximizeCommand = editor.getCommand('maximize');
+						if (maximizeCommand.state == CKEDITOR.TRISTATE_OFF) {
+							maximizeCommand.exec();
+						}
+					}
+
+					if (typeof editor.mpdialog.afterClose == "function") {
+						editor.mpdialog.afterClose();
+						editor.mpdialog.afterClose = false;
+					}
+
+					Dialog.closeSub();
+					editor.focusManager.unlock();
+				}
+			};
 		}
 	});
 })();
