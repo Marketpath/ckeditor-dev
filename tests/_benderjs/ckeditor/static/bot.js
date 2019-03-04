@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2018, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -123,7 +123,8 @@
 			var editor = this.editor,
 				btn = editor.ui.get( name ),
 				tc = this.testCase,
-				btnEl;
+				btnEl,
+				leftMouseButton = CKEDITOR.env.ie && CKEDITOR.env.version < 9 ? 1 : CKEDITOR.MOUSE_BUTTON_LEFT;
 
 			editor.once( 'panelShow', function() {
 				// Make sure resume comes after wait.
@@ -137,7 +138,8 @@
 			} );
 
 			btnEl = CKEDITOR.document.getById( btn._.id );
-			btnEl.$[ CKEDITOR.env.ie ? 'onmouseup' : 'onclick' ]();
+
+			bender.tools.fireElementEventHandler( btnEl, CKEDITOR.env.ie ? 'onmouseup' : 'onclick', { button: leftMouseButton } );
 
 			// combo panel opening is synchronous.
 			tc.wait();
@@ -168,7 +170,7 @@
 			// some heavy tests. It causes "wait() called but resume() never called"
 			// sort of errors because it takes longer to fire `dialogShow` than 1000ms,
 			// especially in build version of CKEditor (https://dev.ckeditor.com/ticket/13920).
-			tc.wait( 2000 );
+			tc.wait();
 		},
 
 		getData: function( fixHtml, compatHtml ) {

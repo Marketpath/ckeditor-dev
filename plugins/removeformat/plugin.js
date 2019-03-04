@@ -1,5 +1,5 @@
 ﻿/**
- * @license Copyright (c) 2003-2018, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -166,7 +166,7 @@ CKEDITOR.plugins.removeformat = {
  *
  * @since 3.3
  * @member CKEDITOR.editor
- * @param {Function} func The function to be called, which will be passed a {CKEDITOR.dom.element} element to test.
+ * @param {Function} func The function to be called, which will be passed an {@link CKEDITOR.dom.element element} to test.
  */
 CKEDITOR.editor.prototype.addRemoveFormatFilter = function( func ) {
 	if ( !this._.removeFormatFilters )

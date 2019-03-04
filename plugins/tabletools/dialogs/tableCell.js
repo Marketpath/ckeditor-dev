@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2018, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -291,95 +291,107 @@ CKEDITOR.dialog.add( 'cellProperties', function( editor ) {
 			padding: 0,
 			widths: colorDialog ? [ '60%', '40%' ] : [ '100%' ],
 			requiredContent: 'td{background-color}',
-			children: [ {
-				type: 'text',
-				id: 'bgColor',
-				label: langCell.bgColor,
-				'default': '',
-				setup: setupCells( function( element ) {
-					var bgColorAttr = element.getAttribute( 'bgColor' ),
-						bgColorStyle = element.getStyle( 'background-color' );
+			children: ( function() {
+				var children = [ {
+					type: 'text',
+					id: 'bgColor',
+					label: langCell.bgColor,
+					'default': '',
+					setup: setupCells( function( element ) {
+						var bgColorAttr = element.getAttribute( 'bgColor' ),
+							bgColorStyle = element.getStyle( 'background-color' );
 
-					return bgColorStyle || bgColorAttr;
-				} ),
-				commit: function( selectedCell ) {
-					var value = this.getValue();
+						return bgColorStyle || bgColorAttr;
+					} ),
+					commit: function( selectedCell ) {
+						var value = this.getValue();
 
-					if ( value ) {
-						selectedCell.setStyle( 'background-color', this.getValue() );
-					} else {
-						selectedCell.removeStyle( 'background-color' );
+						if ( value ) {
+							selectedCell.setStyle( 'background-color', this.getValue() );
+						} else {
+							selectedCell.removeStyle( 'background-color' );
+						}
+
+						selectedCell.removeAttribute( 'bgColor' );
 					}
+				} ];
 
-					selectedCell.removeAttribute( 'bgColor' );
+				if ( colorDialog ) {
+					children.push( {
+						type: 'button',
+						id: 'bgColorChoose',
+						'class': 'colorChooser', // jshint ignore:line
+						label: langCell.chooseColor,
+						onLoad: function() {
+							// Stick the element to the bottom (https://dev.ckeditor.com/ticket/5587)
+							this.getElement().getParent().setStyle( 'vertical-align', 'bottom' );
+						},
+						onClick: function() {
+							editor.getColorFromDialog( function( color ) {
+								if ( color ) {
+									this.getDialog().getContentElement( 'info', 'bgColor' ).setValue( color );
+								}
+								this.focus();
+							}, this );
+						}
+					} );
 				}
-			},
-				colorDialog ? {
-					type: 'button',
-					id: 'bgColorChoose',
-					'class': 'colorChooser', // jshint ignore:line
-					label: langCell.chooseColor,
-					onLoad: function() {
-						// Stick the element to the bottom (https://dev.ckeditor.com/ticket/5587)
-						this.getElement().getParent().setStyle( 'vertical-align', 'bottom' );
-					},
-					onClick: function() {
-						editor.getColorFromDialog( function( color ) {
-							if ( color ) {
-								this.getDialog().getContentElement( 'info', 'bgColor' ).setValue( color );
-							}
-							this.focus();
-						}, this );
-					}
-				} : null ]
+				return children;
+			} )()
 		},
 		{
 			type: 'hbox',
 			padding: 0,
 			widths: colorDialog ? [ '60%', '40%' ] : [ '100%' ],
 			requiredContent: 'td{border-color}',
-			children: [ {
-				type: 'text',
-				id: 'borderColor',
-				label: langCell.borderColor,
-				'default': '',
-				setup: setupCells( function( element ) {
-					var borderColorAttr = element.getAttribute( 'borderColor' ),
-						borderColorStyle = element.getStyle( 'border-color' );
+			children: ( function() {
+				var children = [ {
+					type: 'text',
+					id: 'borderColor',
+					label: langCell.borderColor,
+					'default': '',
+					setup: setupCells( function( element ) {
+						var borderColorAttr = element.getAttribute( 'borderColor' ),
+							borderColorStyle = element.getStyle( 'border-color' );
 
-					return borderColorStyle || borderColorAttr;
-				} ),
-				commit: function( selectedCell ) {
-					var value = this.getValue();
-					if ( value ) {
-						selectedCell.setStyle( 'border-color', this.getValue() );
-					} else {
-						selectedCell.removeStyle( 'border-color' );
-					}
-
-					selectedCell.removeAttribute( 'borderColor' );
-				}
-			},
-
-			colorDialog ? {
-				type: 'button',
-				id: 'borderColorChoose',
-				'class': 'colorChooser', // jshint ignore:line
-				label: langCell.chooseColor,
-				style: ( rtl ? 'margin-right' : 'margin-left' ) + ': 10px',
-				onLoad: function() {
-					// Stick the element to the bottom (https://dev.ckeditor.com/ticket/5587)
-					this.getElement().getParent().setStyle( 'vertical-align', 'bottom' );
-				},
-				onClick: function() {
-					editor.getColorFromDialog( function( color ) {
-						if ( color ) {
-							this.getDialog().getContentElement( 'info', 'borderColor' ).setValue( color );
+						return borderColorStyle || borderColorAttr;
+					} ),
+					commit: function( selectedCell ) {
+						var value = this.getValue();
+						if ( value ) {
+							selectedCell.setStyle( 'border-color', this.getValue() );
+						} else {
+							selectedCell.removeStyle( 'border-color' );
 						}
-						this.focus();
-					}, this );
+
+						selectedCell.removeAttribute( 'borderColor' );
+					}
+				} ];
+
+				if ( colorDialog ) {
+					children.push( {
+						type: 'button',
+						id: 'borderColorChoose',
+						'class': 'colorChooser', // jshint ignore:line
+						label: langCell.chooseColor,
+						style: ( rtl ? 'margin-right' : 'margin-left' ) + ': 10px',
+						onLoad: function() {
+							// Stick the element to the bottom (https://dev.ckeditor.com/ticket/5587)
+							this.getElement().getParent().setStyle( 'vertical-align', 'bottom' );
+						},
+						onClick: function() {
+							editor.getColorFromDialog( function( color ) {
+								if ( color ) {
+									this.getDialog().getContentElement( 'info', 'borderColor' ).setValue( color );
+								}
+								this.focus();
+							}, this );
+						}
+					} );
 				}
-			} : null ]
+
+				return children;
+			} )()
 		} ],
 	itemsCount = 0,
 	index = -1,
@@ -506,14 +518,14 @@ CKEDITOR.dialog.add( 'cellProperties', function( editor ) {
 		};
 	}
 
-	// Returns a function, which runs regular "setup" for all selected cells to find out
+	// Returns a function that runs a regular "setup" for all selected cells to find out
 	// whether the initial value of the field would be the same for all cells. If so,
 	// the value is displayed just as if a regular "setup" was executed. Otherwise,
-	// i.e. when there are several cells of different value of the property, a field
-	// gets empty value.
+	// when there are several cells with a different value of the property, a field
+	// gets an empty value.
 	//
 	// * @param {Function} setup Setup function which returns a value instead of setting it.
-	// * @returns {Function} A function to be used in dialog definition.
+	// * @returns {Function} A function to be used in the dialog definition.
 	function setupCells( setup ) {
 		return function( cells ) {
 			var fieldValue = setup( cells[ 0 ] );
@@ -544,7 +556,7 @@ CKEDITOR.dialog.add( 'cellProperties', function( editor ) {
 
 	// Reads the unit of width property of the table cell.
 	//
-	// * @param {CKEDITOR.dom.element} cell An element representing table cell.
+	// * @param {CKEDITOR.dom.element} cell An element representing the table cell.
 	// * @returns {String} A unit of width: 'px', '%' or undefined if none.
 	function getCellWidthType( cell ) {
 		var match = widthPattern.exec(

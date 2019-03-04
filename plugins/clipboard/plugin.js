@@ -1,5 +1,5 @@
 ﻿/**
- * @license Copyright (c) 2003-2018, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -1975,6 +1975,11 @@
 
 			// ...and paste content into the drop position.
 			dropRange = editor.createRange();
+			// Get actual selection with bookmarks if drop's bookmark are not in editable any longer.
+			// This might happen after extracting content from range (#2292).
+			if ( !dropBookmark.startNode.getCommonAncestor( editable ) ) {
+				dropBookmark = editor.getSelection().createBookmarks()[ 0 ];
+			}
 			dropRange.moveToBookmark( dropBookmark );
 
 			// We do not select drop range, because of may be in the place we can not set the selection
@@ -2695,17 +2700,16 @@
 		 */
 		_getImageFromClipboard: function() {
 			var file;
-
-			if ( this.$ && this.$.items && this.$.items[ 0 ] ) {
-				try {
+			try {
+				if ( this.$ && this.$.items && this.$.items[ 0 ] ) {
 					file = this.$.items[ 0 ].getAsFile();
 					// Duck typing
 					if ( file && file.type ) {
 						return file;
 					}
-				} catch ( err ) {
-					// noop
 				}
+			} catch ( err ) {
+			// noop
 			}
 
 			return undefined;
