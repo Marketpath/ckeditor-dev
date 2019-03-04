@@ -62,23 +62,25 @@
 					opts = opts || {};
 
 					var widget = this,
-						scriptElement = new CKEDITOR.dom.element('script'),
-						nextCbNum = CKEDITOR._.mpembedCallbacks.length,
-						url = widget.providerUrl.replace('{url}', encodeURIComponent(newUrl)).replace('{callback}', encodeURIComponent('CKEDITOR._.mpembedCallbacks[' + nextCbNum + ']'));
+						scriptElement = false,
+						request = {
+							url: widget.providerUrl.replace('{url}', encodeURIComponent(newUrl)),
+							cancel: function noop() { }
+						};
 
 					widget.data.original_code = false;
 
-					var request = {
-						url: newUrl,
-						cancel: cleanup
-					};
-
-					CKEDITOR._.mpembedCallbacks[nextCbNum] = function (response) {
+					var callback = function (response) {
 						setTimeout(function () {
-							cleanup();
+							request.cancel();
 
 							var html;
-							if (response.type == 'photo') {
+							if (typeof response != 'object') {
+								if (typeof opts.errorCallback == 'function') {
+									opts.errorCallback();
+								}
+								return;
+							} else if (response.type == 'photo') {
 								html = '<img src="' + CKEDITOR.tools.htmlEncodeAttr(response.url) + '" ' + 'alt="' + CKEDITOR.tools.htmlEncodeAttr(response.title || '') + '" style="max-width:100%;height:auto" />';
 							} else if (response.type == 'video' || response.type == 'rich') {
 								// Embedded iframes are added to page's focus list. Adding negative tabindex attribute
@@ -109,26 +111,47 @@
 						});
 					};
 
-					scriptElement.setAttribute('src', url);
-					scriptElement.on('error', function () {
-						cleanup();
+					if (navigator.userAgent.match(/Explorer/)) {
+						var scriptElement = new CKEDITOR.dom.element('script'),
+							nextCbNum = CKEDITOR._.mpembedCallbacks.length
+						request.url += '&callback=' + encodeURIComponent('CKEDITOR._.mpembedCallbacks[' + nextCbNum + ']');
+						request.cancel = function () {
+							if (scriptElement) {
+								scriptElement.remove();
+								delete CKEDITOR._.mpembedCallbacks[nextCbNum];
+								scriptElement = null;
+							}
+						};
+						
+						CKEDITOR._.mpembedCallbacks[nextCbNum] = callback;
+						scriptElement.setAttribute('src', request.url);
+						scriptElement.on('error', function () {
+							request.cancel();
 
-						if (typeof opts.errorCallback == 'function') {
-							opts.errorCallback();
+							if (typeof opts.errorCallback == 'function') {
+								opts.errorCallback();
+							}
+						});
+						CKEDITOR.document.getBody().append(scriptElement);
+						return request;
+					}
+
+					var req = new XMLHttpRequest();
+					req.open('GET', request.url, true);
+					req.onreadystatechange = function (e) {
+						if (req.readyState == 4) {
+							var data;
+							if (req.status == 200) {
+								try {
+									data = JSON.parse(req.responseText);
+								} catch (e) { }
+							}
+							callback(data);
 						}
-					});
-					CKEDITOR.document.getBody().append(scriptElement);
-
+					};
+					req.send();
 
 					return request;
-
-					function cleanup() {
-						if (scriptElement) {
-							scriptElement.remove();
-							delete CKEDITOR._.mpembedCallbacks[nextCbNum];
-							scriptElement = null;
-						}
-					}
 				}
 			});
 			//var widgetDefinition = CKEDITOR.plugins.embedBase.createWidgetBaseDefinition(editor);

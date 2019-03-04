@@ -243,11 +243,7 @@
                 } else {
 					var Dialog = editor.config.Dialog;
 
-					var finish = function () {
-						Dialog.off('onEntitySelect');
-					};
-
-					Dialog.off('onEntitySelect').on('onEntitySelect', function (input) {
+					var onFinishId = Dialog.off('onEntitySelect').on('onEntitySelect', function (input) {
 						var guid = input ? typeof input === "string" ? input : input.GUID || input.item.GUID : void 0;
 						if (!guid) {
 							setMarkup('');
@@ -260,7 +256,11 @@
 						return true;
 					});
 
-					CKEDITOR.plugins.mpdialog.openDialog(editor, 'select-' + type.toLowerCase(), {}, finish);
+					var finish = function () {
+						Dialog.off('onEntitySelect', onFinishId);
+					};
+
+					editor.mpdialog.openDialog('select-' + type.toLowerCase(), {}, finish);
                 }
             }
 

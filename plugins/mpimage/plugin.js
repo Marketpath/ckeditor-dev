@@ -85,6 +85,7 @@
 					var dialogArgs = {},
 						widget = editor.widgets.focused,
 						img = widget && widget.parts.image,
+						protectedClasses = [],
 						plugin = CKEDITOR.plugins.image2;
 
 					if (img) {
@@ -92,6 +93,7 @@
 							ref = img.getAttribute('data-ref'),
 							alt = img.getAttribute('alt'),
 							title = img.getAttribute('title'),
+							classname = img.getAttribute('class'),
 							width = img.getStyle('width') || img.getAttribute('width'),
 							height = img.getStyle('height') || img.getAttribute('height'),
 							captioned = !!widget.parts.caption,
@@ -144,6 +146,24 @@
 						}
 						dialogArgs['img-alt'] = alt;
 						dialogArgs['img-title'] = title;
+						if (classname) {
+							var allClasses = classname.split(' '),
+								finalClasses = [];
+
+							for (var i = 0; i < allClasses.length; i++) {
+								//ignore empty classnames (extra spaces in the class attribute)
+								if (allClasses[i]) {
+									if (allClasses[i].substr(0, 4) == 'cke_') {
+										protectedClasses.push(allClasses[i]);
+									} else {
+										finalClasses.push(allClasses[i]);
+									}
+								}
+							}
+							if (finalClasses.length) {
+								dialogArgs['img-class'] = finalClasses.join(' ');
+							}
+						}
 						if (width) {
 							dialogArgs['img-width'] = width;
 						}
@@ -168,7 +188,7 @@
 					}
 
 					var Dialog = editor.config.Dialog;
-					Dialog.off('imgSaved').on('imgSaved', function (info) {
+					var onFinishId = Dialog.off('imgSaved').on('imgSaved', function (info) {
 						var widgetData = {
 							src: info.url,
 							alt: info.alt || null,
@@ -186,6 +206,19 @@
 								'title': info.title || null
 							},
 							imgStyles = {};
+
+						if (info.hasOwnProperty('classname')) {
+							//in case the user has not loaded the latest version of marketpath CMS yet
+							if (info.classname) {
+								protectedClasses.push(info.classname);
+							}
+							if (protectedClasses.length) {
+								imgAttributes['class'] = protectedClasses.join(' ');
+							} else {
+								imgAttributes['class'] = null;
+							}
+						}
+						
 
 						var height = info.height,
 							heightIsPct = height && height[height.length - 1] == '%',
@@ -301,10 +334,10 @@
 					});
 
 					var finish = function () {
-						Dialog.off('imgSaved');
+						Dialog.off('imgSaved', onFinishId);
 					};
 
-					CKEDITOR.plugins.mpdialog.openDialog(editor, 'img-editor', dialogArgs, finish);
+					editor.mpdialog.openDialog('img-editor', dialogArgs, finish);
 				}
 			});
 		}
