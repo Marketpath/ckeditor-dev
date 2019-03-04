@@ -98,8 +98,10 @@
 						originalWidth = originalWidth || inner.getSize('width', true);
 
 						var setStyle = function (node, style) {
-							elStyles.push([node.$, node.$.style.cssText]);
+							elStyles.push([node.$, node.$.style.cssText, node.$.scrollTop, node.$.scrollLeft]);
 							node.$.style.cssText = style;
+							node.$.scrollTop = 0;
+							node.$.scrollLeft = 0;
 						};
 
 						var node = container;
@@ -144,6 +146,8 @@
 						//simple to restore the styles
 						for (var i = elStyles.length - 1; i >= 0; i--) {
 							elStyles[i][0].style.cssText = elStyles[i][1];
+							elStyles[i][0].scrollTop = elStyles[i][2];
+							elStyles[i][0].scrollLeft = elStyles[i][3];
 						}
 						elStyles = [];
 
