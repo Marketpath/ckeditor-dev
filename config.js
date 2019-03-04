@@ -19,7 +19,7 @@ CKEDITOR.editorConfig = function (config) {
 	config.allowedContent = true;
 	config.contentsCss = '';
 	config.format_tags = 'p;div;h1;h2;h3;h4;h5;h6;pre';
-	config.embed_provider = 'https://noembed.com/embed?callback={callback}&url={url}';
+	config.embed_provider = 'https://noembed.com/embed?url={url}';
 	config.autoEmbed_widget = 'mpembed';
 	// %REMOVE_START%
 	config.skin = 'mp';
