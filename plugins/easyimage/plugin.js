@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2018, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -294,14 +294,7 @@
 						// If widget begins with incomplete image, make sure to refresh balloon toolbar (if present)
 						// once the image size is available.
 						getNaturalWidth( imagePart, function() {
-							// Currently we're breaking encapsulation, once #1496 is fixed, we could use a proper method to
-							// update the position.
-							var contextView = editor._.easyImageToolbarContext.toolbar._view;
-
-							if ( contextView.rect.visible ) {
-								// We have to disable focusing balloon toolbar to prevent loosing focus by an image (#1529).
-								contextView.attach( contextView._pointedElement, { focusElement: false } );
-							}
+							editor._.easyImageToolbarContext.toolbar.reposition();
 						} );
 					}
 
@@ -501,10 +494,6 @@
 		}
 	};
 
-	function isSupportedBrowser() {
-		return !CKEDITOR.env.ie || CKEDITOR.env.version >= 11;
-	}
-
 	function addUploadButtonToToolbar( editor ) {
 		editor.ui.addButton( BUTTON_PREFIX + 'Upload', {
 			label: editor.lang.easyimage.commands.upload,
@@ -542,8 +531,12 @@
 			CKEDITOR.dialog.add( 'easyimageAlt', this.path + 'dialogs/easyimagealt.js' );
 		},
 
+		isSupportedEnvironment: function() {
+			return !CKEDITOR.env.ie || CKEDITOR.env.version >= 11;
+		},
+
 		init: function( editor ) {
-			if ( !isSupportedBrowser() ) {
+			if ( !this.isSupportedEnvironment() ) {
 				return;
 			}
 			loadStyles( editor, this );
@@ -552,7 +545,7 @@
 		// Widget must be registered after init in case that link plugin is dynamically loaded e.g. via
 		// `config.extraPlugins`.
 		afterInit: function( editor ) {
-			if ( !isSupportedBrowser() ) {
+			if ( !this.isSupportedEnvironment() ) {
 				return;
 			}
 			var styles = getStylesForEditor( editor );
@@ -586,7 +579,7 @@
 
 	/**
 	 * Custom styles that could be applied to the Easy Image widget.
-	 * All styles must be [valid style definitions](#!/guide/dev_howtos_styles-section-how-do-i-customize-the-styles-drop-down-list%3F).
+	 * All styles must be {@glink guide/dev_howtos_styles#how-do-i-customize-the-styles-drop-down-list valid style definitions}.
 	 * There are three additional properties for each style definition:
 	 *
 	 * * `label` &ndash; A string used as a button label in the balloon toolbar for the widget.

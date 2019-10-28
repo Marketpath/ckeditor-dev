@@ -23,7 +23,6 @@ CKEDITOR.editorConfig = function (config) {
 	config.autoEmbed_widget = 'mpembed';
 	// %REMOVE_START%
 	config.skin = 'mp';
-	//config.skin = 'moono-lisa';
 	//using the original plugin ordering
 	//with unknown plugins after original plugins
 	//and custom plugins at the end
@@ -66,6 +65,7 @@ CKEDITOR.editorConfig = function (config) {
 		//'maximize,' +
 		//'newpage,' +
 		//'pagebreak,' +
+		'pastefromgdocs,' +
 		'pastefromword,' +
 		'pastetext,' +
 		//'preview,' +
