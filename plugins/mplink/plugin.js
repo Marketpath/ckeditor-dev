@@ -281,31 +281,38 @@
 
                         dialogArgs.link = href;
 
+                        var autoSetType = true;
                         if (ref) {
                             var refParts = ref.split(':'),
                                 guid = refParts[1];
 
-                            switch (refParts[0]) {
+                            switch (refParts[0].toLowerCase()) {
                                 case 'page':
-                                    type = 'page';
+                                case 'entity':
+                                    type = 'Entity';
+                                    autoSetType = false;
                                     break;
                                 case 'document':
-                                    type = 'document';
+                                    type = 'Document';
+                                    autoSetType = false;
                                     var downloadAttr = link.getAttribute('download');
                                     if (downloadAttr) {
                                         dialogArgs['link-download-name'] = downloadAttr;
                                     }
                                     break;
                                 case 'image':
-                                    type = 'image';
+                                    type = 'Image';
+                                    autoSetType = false;
                                     break;
                                 default:
-                                    type = 'custom';
+                                    autoSetType = true;
                                     guid = false;
                                     break;
                             }
-                        } else if (href) {
-                            type = (href.substr(0, 7) == 'mailto:') ? 'email' : 'custom';
+                        }
+
+                        if (autoSetType) {
+                            type = href.substr(0, 7) == 'mailto:' ? 'Email' : href.substr(0, 4) == 'tel:' ? 'Tel' : href.substr(0, 11) == 'javascript:' ? 'Javascript' : 'Custom';
                         }
 
                         if (type) {
