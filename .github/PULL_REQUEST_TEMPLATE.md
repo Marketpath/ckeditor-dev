@@ -15,10 +15,23 @@ in the official CKEditor documentation.
 - [ ] Unit tests
 - [ ] Manual tests
 
+## Did you follow CKEditor 4 code style guide?
+
+Your code should follow guidelines from [CKEditor 4 code style guide](https://github.com/ckeditor/ckeditor4/blob/major/dev/docs/codestyle.md) which helps keep the entire codebase consistent.
+
+- [ ] PR is consistent with code style guide
+
 ## What is the proposed changelog entry for this pull request?
 
-*Describe the purpose of the pull request in a few simple sentences.*
+```
+*[#<ISSUE_NUMBER>](https://github.com/ckeditor/ckeditor4/issues/<ISSUE_NUMBER>): Describe the purpose of the pull request in a few simple sentences.
+```
 
 ## What changes did you make?
 
 *Give an overview…*
+
+## Which issues your PR resolves?
+
+Closes #<ISSUE_NUMBER>.
+<!-- Closes #<ANOTHER_ISSUE_NUMBER>. -->

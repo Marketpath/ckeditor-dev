@@ -1,5 +1,5 @@
 ﻿/**
- * @license Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2020, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -61,6 +61,8 @@
 	/**
 	 * A set of paste tools helpers.
 	 *
+	 * @class
+	 * @singleton
 	 * @member CKEDITOR.plugins
 	 * @since 4.13.0
 	 */
@@ -78,6 +80,7 @@
 		 *
 		 * @param {String[]} filters An array of filter URLs.
 		 * @param {Function} callback A callback that will be invoked after loading all scripts.
+		 * @returns {Boolean} Returns `true` when there is no filters to load, `false` otherwise.
 		 * @member CKEDITOR.plugins.pastetools
 		 */
 		loadFilters: loadFilters,
@@ -172,6 +175,38 @@
 				} );
 
 			return config[ found ];
+		},
+
+		/**
+		 * Gets name of generator used to create given content.
+		 *
+		 * It returns `undefined` if `<meta>` tag with generator name was not present.
+		 * It returns `'unknown'` if `<meta>` tag has generator other than `'microsoft'` or `'libreoffice'`.
+		 *
+		 * @member CKEDITOR.plugins.pastetools
+		 * @param {String} content clipboard data
+		 * @returns {String/undefined} name of a recognized content generator. Possible values: `'microsoft'`, `'libreoffice'`, `'unknown'`, `undefiend`.
+		 */
+		getContentGeneratorName: function( content ) {
+			var metaGeneratorTag = /<meta\s+name=["']?generator["']?\s+content=["']?(\w+)/gi,
+				result = metaGeneratorTag.exec( content ),
+				generatorName;
+
+			if ( !result || !result.length ) {
+				return;
+			}
+
+			generatorName = result[ 1 ].toLowerCase();
+
+			if ( generatorName.indexOf( 'microsoft' ) === 0 ) {
+				return 'microsoft';
+			}
+
+			if ( generatorName.indexOf( 'libreoffice' ) === 0 ) {
+				return 'libreoffice';
+			}
+
+			return 'unknown';
 		}
 	};
 
