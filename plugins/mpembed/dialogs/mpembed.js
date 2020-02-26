@@ -138,8 +138,11 @@ CKEDITOR.dialog.add('mpembed', function (editor) {
 						onChange: function () {
 							onUrlChange(this.getValue());
 						},
-						onKeyup: function () {
-							onUrlChange(this.getValue());
+                        onKeyup: function (ckEvent) {
+                            var event = ckEvent && ckEvent.data && ckEvent.data.$;
+                            if (event && event.which !== 0 && !event.ctrlKey && !event.metaKey) { // && !event.altKey) {
+                                onUrlChange(this.getValue());
+                            }
 						}
 					}, {
 						type: 'html',
@@ -191,8 +194,11 @@ CKEDITOR.dialog.add('mpembed', function (editor) {
 						onChange: function () {
 							onCodeChange(this.getValue());
 						},
-						onKeyup: function () {
-							onCodeChange(this.getValue());
+                        onKeyup: function () {
+                            var event = ckEvent && ckEvent.data && ckEvent.data.$;
+                            if (event && event.which !== 0 && !event.ctrlKey && !event.metaKey) { // && !event.altKey) {
+                                onCodeChange(this.getValue());
+                            }
 						}
 					}
 				]

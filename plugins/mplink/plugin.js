@@ -86,7 +86,30 @@
                             dialogArgs['hide-text'] = true;
                         }
                     } else {
-                        dialogArgs.text = selection.getSelectedText();
+						//test to see if the selection contains multiple elements
+                        var rElem = false;
+                        for (var i = ranges.length - 1; i >= 0; i--) {
+                            ranges[i].shrink(CKEDITOR.SHRINK_TEXT);
+                            var walker = new CKEDITOR.dom.walker(ranges[i]);
+                            var walkernode;
+                            while (walkernode = walker.next()) {
+                                if (walkernode.type == CKEDITOR.NODE_TEXT) {
+                                    walkernode = walkernode.getParent();
+                                } else if (walkernode.type != CKEDITOR.NODE_ELEMENT) {
+                                    continue;
+                                }
+                                if (rElem && walkernode != rElem) {
+                                    showLinkText = false;
+                                    break;
+                                }
+                                rElem = walkernode;
+                            }
+                        }
+                        if (showLinkText) {
+                            dialogArgs.text = selection.getSelectedText();
+                        } else {
+                            dialogArgs['hide-text'] = true;
+                        }
                     }
 
                     var Dialog = editor.config.Dialog;
@@ -106,7 +129,7 @@
                                     type = 'entity';
                                     setAttrs['data-ref'] = 'Entity:' + info.guid;
                                 } else {
-                                    type = 'Custom';
+                                    type = 'custom';
                                     removeAttrs.push('data-ref');
                                 }
                                 break;

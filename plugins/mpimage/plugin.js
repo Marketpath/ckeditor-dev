@@ -191,7 +191,7 @@
 					var onFinishId = Dialog.off('imgSaved').on('imgSaved', function (info) {
 						var widgetData = {
 							src: info.url,
-							alt: info.alt || null,
+							alt: info.alt || '',
 							height: null,
 							width: null,
 							resizedWidth: null,
@@ -201,8 +201,8 @@
 							align: info.alignment || 'none'
 						},
 							imgAttributes = {
-								'data-ref': info.type == 'image' && info.guid ? 'image:' + info.guid : null,
-								'data-preset': info.type == 'image' && info.guid && Array.isArray(info.presets) && info.presets.map(function (preset) { return preset.Code; }).join('/') || null,
+                                'data-ref': info.type == 'Image' && info.guid ? 'image:' + info.guid : null,
+                                'data-preset': info.type == 'Image' && info.guid && Array.isArray(info.presets) && info.presets.map(function (preset) { return preset.Code; }).join('/') || null,
 								'title': info.title || null
 							},
 							imgStyles = {};

@@ -250,7 +250,7 @@
 						}
 
 						service.get(guid).then(function (obj) {
-							setMarkup('{% ' + type.toLowerCase() + ' output_to_template "' + guid + '" %}', obj.Name);
+							setMarkup('{% ' + type.toLowerCase() + ' = "' + guid + '" %}', obj.Name);
 						});
 
 						return true;
