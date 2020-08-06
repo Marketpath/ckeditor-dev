@@ -9,6 +9,7 @@
 				closeSubId: false,
 				onCancelId: false,
 				afterClose: false,
+				oldPath: '',
 				openDialog: function (name, attrs, afterClose) {
 					var Dialog = editor.config.Dialog;
 					if (!Dialog) {
@@ -17,36 +18,43 @@
 
 					//console.log('Opening ' + editor.id);
 
+					var firstEditor = Dialog.get('ckeditor_browsing_instance');
+					if (firstEditor && firstEditor != editor && firstEditor.mpdialog && firstEditor.mpdialog.browsing) {
+						firstEditor.mpdialog.wasFullscreen = false;
+						firstEditor.mpdialog.endBrowse({ listenerData: { name: 'openDialog', forceclose: true } });
+					}
 					if (editor.mpdialog.browsing) {
 						editor.mpdialog.endBrowse({ listenerData: { name: 'openDialog', forceclose: true } });
+					}
+					Dialog.set('ckeditor_browsing_instance', editor);
+
+					if (Dialog.get('fromCache', false)) {
+						attrs['from-cache'] = true;
+						var cacheName = Dialog.get('cacheName', false);
+						if (cacheName) {
+							attrs['cache-name'] = cacheName;
+						}
+					}
+					if (Dialog.get('getDefinitionFn')) {
+						attrs['define-from'] = 'getDefinitionFn';
 					}
 
 					editor.mpdialog.afterClose = afterClose;
 					editor.mpdialog.browsing = true;
 					editor.focusManager.lock();
 
+					var maximizeCommand = editor.getCommand('maximize');
+					editor.mpdialog.wasFullscreen = maximizeCommand && maximizeCommand.state == CKEDITOR.TRISTATE_ON;
+					if (editor.mpdialog.wasFullscreen) {
+						maximizeCommand.exec();
+					}
+
 					var os = Dialog.openSub(name, attrs);
 					var afterOpen = function () {
 						//console.log('Opened ' + editor.id);
-
-						var firstEditor = Dialog.get('ckeditor_browsing_instance');
-						if (firstEditor && firstEditor != editor && firstEditor.mpdialog && firstEditor.mpdialog.wasFullscreen) {
-							var minimizeCommand = firstEditor.getCommand('maximize');
-							if (minimizeCommand && minimizeCommand.state == CKEDITOR.TRISTATE_ON) {
-								minimizeCommand.exec();
-							}
-						}
-
-						Dialog.set('ckeditor_browsing_instance', editor);
-
-						var maximizeCommand = editor.getCommand('maximize');
-						editor.mpdialog.wasFullscreen = maximizeCommand && maximizeCommand.state == CKEDITOR.TRISTATE_ON;
-						if (editor.mpdialog.wasFullscreen) {
-							maximizeCommand.exec();
-						}
-
 						editor.on('change', editor.mpdialog.endBrowse, null, { name: 'change', forceclose: true });
-						editor.on('selectionChange', editor.mpdialog.endBrowse, null, { name: 'selectionChange', forceclose: true });
+						editor.mpdialog.oldPath = editor.elementPath();
+						editor.on('selectionChange', editor.mpdialog.selectionChangeListener, null, { name: 'selectionChange', forceclose: true });
 						editor.on('mode', editor.mpdialog.endBrowse, null, { name: 'mode', forceclose: true });
 
 						editor.mpdialog.closeSubId = Dialog.on('afterCloseSub', function () {
@@ -69,6 +77,12 @@
 						afterOpen();
 					}
 				},
+				selectionChangeListener: function (event) {
+					var newPath = event.data.path;
+					if (!newPath.compare(editor.mpdialog.oldPath)) {
+						editor.mpdialog.endBrowse(event);
+					}
+				},
 				endBrowse: function (event) {
 					var eventname = event && event.listenerData && event.listenerData.name,
 						forceclose = event && event.listenerData && event.listenerData.forceclose;
@@ -82,7 +96,7 @@
 					editor.mpdialog.browsing = false;
 
 					editor.removeListener('change', editor.mpdialog.endBrowse);
-					editor.removeListener('selectionChange', editor.mpdialog.endBrowse);
+					editor.removeListener('selectionChange', editor.mpdialog.selectionChangeListener);
 					editor.removeListener('mode', editor.mpdialog.endBrowse);
 
 					if (editor.mpdialog.closeSubId !== false) {
@@ -110,6 +124,19 @@
 					editor.focusManager.unlock();
 				}
 			};
+
+			editor.on('focus', function (event) {
+				var Dialog = editor.config.Dialog;
+				if (Dialog) {
+					var firstEditor = Dialog.get('ckeditor_browsing_instance');
+					if (firstEditor && firstEditor.mpdialog) {
+						firstEditor.mpdialog.wasFullscreen = false;
+					}
+					//if (firstEditor && firstEditor != editor && firstEditor.mpdialog) {
+					//firstEditor.mpdialog.endBrowse({ listenerData: { name: 'otherfocus', forceclose: true } });
+					//}
+				}
+			});
 		}
 	});
 })();

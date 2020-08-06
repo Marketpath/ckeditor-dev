@@ -230,7 +230,11 @@
                         if (element) {
                             element.scrollIntoView(true);
                         }
-                    }
+					}
+
+					//if (editor.mpdialog) {
+					//	editor.mpdialog.wasFullscreen = false;
+					//}
 
                     savedState = this.state;
                     editor.fire('maximize', this.state);
