@@ -17,8 +17,8 @@
 
 	// #### table selection : START
 	// @param {CKEDITOR.dom.range[]} ranges
-	// @param {Boolean} allowPartially Whether a collapsed selection within table is recognized to be a valid selection.
-	// This happens for WebKits on MacOS, when you right click inside the table.
+	// @param {Boolean} allowPartially Whether a collapsed selection within a table is recognized to be a valid selection.
+	// This happens for WebKit browsers on MacOS when you right-click inside the table.
 	function isTableSelection( ranges, allowPartially ) {
 		if ( ranges.length === 0 ) {
 			return false;
@@ -68,6 +68,10 @@
 		}
 
 		return true;
+	}
+
+	function isSupportingTableSelectionPlugin( editor ) {
+		return editor && editor.plugins.tableselection && editor.plugins.tableselection.isSupportedEnvironment( editor );
 	}
 
 	// After performing fake table selection, the real selection is limited
@@ -1234,7 +1238,7 @@
 	/**
 	 * Retrieves the {@link CKEDITOR.dom.range} instances that represent the current selection.
 	 *
-	 * **Note:** This function is an alias for {@link CKEDITOR.dom.selection#getRanges} method.
+	 * **Note:** This function is an alias for the {@link CKEDITOR.dom.selection#getRanges} method.
 	 *
 	 * @method
 	 * @since 4.14.0
@@ -1971,7 +1975,7 @@
 			var editor = this.root.editor;
 
 			// Use fake selection on tables only with tableselection plugin (#3136).
-			if ( editor.plugins.tableselection && isTableSelection( ranges ) ) {
+			if ( isSupportingTableSelectionPlugin( editor ) && isTableSelection( ranges ) ) {
 				// Tables have it's own selection method.
 				performFakeTableSelection.call( this, ranges );
 				return;
@@ -2082,8 +2086,7 @@
 			}
 
 			// Handle special case - fake selection of table cells.
-			if ( editor && editor.plugins.tableselection &&
-				editor.plugins.tableselection.isSupportedEnvironment() &&
+			if ( isSupportingTableSelectionPlugin( editor ) &&
 				isTableSelection( ranges ) && !isSelectingTable &&
 				!ranges[ 0 ]._getTableElement( { table: 1 } ).hasAttribute( 'data-cke-tableselection-ignored' )
 			) {
